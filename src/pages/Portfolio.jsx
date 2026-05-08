@@ -343,7 +343,7 @@ export default function Portfolio() {
               <span className="meta-sep">/</span>
               <span>{content.address || 'Mangaluru, India'}</span>
             </div>
-            <div className="hero-num">01 / Vision</div>
+            
             <h1 className="hero-headline">
               <RichHeadline text={content.hero?.headline} />
             </h1>
