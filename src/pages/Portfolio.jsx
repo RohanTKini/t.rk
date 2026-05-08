@@ -318,6 +318,7 @@ export default function Portfolio() {
           <a href="#about"      onClick={(e) => { setNavOpen(false); smoothScroll(e, 'about'); }}>About</a>
           <a href="#expertise"  onClick={(e) => { setNavOpen(false); smoothScroll(e, 'expertise'); }}>Expertise</a>
           <a href="#experience" onClick={(e) => { setNavOpen(false); smoothScroll(e, 'experience'); }}>Experience</a>
+          <a href="#education"  onClick={(e) => { setNavOpen(false); smoothScroll(e, 'education'); }}>Education</a>
           <a href="#products"   onClick={(e) => { setNavOpen(false); smoothScroll(e, 'products'); }}>Products</a>
           <Link to="/gallery"   onClick={() => setNavOpen(false)}>Gallery</Link>
           <a href="#contact"    onClick={(e) => { setNavOpen(false); smoothScroll(e, 'contact'); }}>Contact</a>
@@ -531,11 +532,42 @@ export default function Portfolio() {
         </div>
       </section>
 
+      {/* EDUCATION — single highlighted card */}
+      <section className="edu" id="education">
+        <div className="container">
+          <div className="edu-head reveal">
+            <span className="section-tag">05 / Education</span>
+            <h2 className="huge-h">Where the<br/>foundations <em>were laid.</em></h2>
+          </div>
+          <div className="edu-card reveal">
+            <div className="edu-side">
+              <div className="edu-period">2022 → 2026</div>
+              <div className="edu-degree">B.E.</div>
+            </div>
+            <div className="edu-main">
+              <span className="edu-tag">Bachelor of Engineering</span>
+              <h3>NMAM Institute of Technology</h3>
+              <div className="edu-branch">Computer Science &amp; Engineering</div>
+              <div className="edu-meta">
+                <span>Aug 2022 — May 2026</span>
+                <span>· Karnataka, India</span>
+              </div>
+            </div>
+            <div className="edu-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                <path d="M6 12v5c0 2 3 3 6 3s6-1 6-3v-5"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* PRODUCTS — bento asymmetric grid */}
       <section className="products" id="products">
         <div className="container">
           <div className="prod-head reveal">
-            <span className="section-tag">05 / Products</span>
+            <span className="section-tag">06 / Products</span>
             <h2 className="huge-h">Ventures<br/>&amp; <em>builds.</em></h2>
             <p className="lead-text" style={{ marginTop: 16 }}>
               Every product begins with a problem worth solving. These are the ones being built, shipped and backed.
@@ -555,7 +587,7 @@ export default function Portfolio() {
       <section className="gal-strip">
         <div className="container">
           <div className="gal-head reveal">
-            <span className="section-tag">06 / Gallery</span>
+            <span className="section-tag">07 / Gallery</span>
             <h2 className="huge-h">Moments &amp; <em>milestones.</em></h2>
             <p className="lead-text" style={{ marginTop: 16 }}>
               Tap any frame to explore the full collection.
@@ -571,7 +603,7 @@ export default function Portfolio() {
       <section className="contact" id="contact">
         <div className="container">
           <div className="contact-head reveal">
-            <span className="section-tag">07 / Contact</span>
+            <span className="section-tag">08 / Contact</span>
             <h2 className="huge-h">Let's<br/><em>build something.</em></h2>
           </div>
           <ContactBlock
@@ -595,7 +627,7 @@ export default function Portfolio() {
       {/* CTA badge */}
       <section className="cta-badge-wrap">
         <div className="cta-badge">
-          <div className="cta-bn">08 / Action</div>
+          <div className="cta-bn">09 / Action</div>
           <h2>Ready to talk ideas,<br/><em>builds, or anything in between?</em></h2>
           <Link to="/schedule" className="btn btn-light">
             Book a One-on-One
@@ -617,6 +649,7 @@ export default function Portfolio() {
           <div>
             <h4>Explore</h4>
             <a href="#about" onClick={(e) => smoothScroll(e, 'about')}>About</a>
+            <a href="#education" onClick={(e) => smoothScroll(e, 'education')}>Education</a>
             <a href="#products" onClick={(e) => smoothScroll(e, 'products')}>Products</a>
             <Link to="/gallery">Gallery</Link>
             <Link to="/schedule">Book a slot</Link>

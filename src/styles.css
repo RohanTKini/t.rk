@@ -725,6 +725,100 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 .spine-item.left .spine-meta { justify-content: flex-end; }
 
 /* =========================================================================
+   EDUCATION — single highlighted card
+   ========================================================================= */
+.edu {
+  padding: 120px 0;
+  background: var(--surface-2);
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.edu-head { margin-bottom: 50px; max-width: 720px; }
+.edu-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 220px 1fr 80px;
+  gap: 36px;
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 40px 44px 40px 50px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform .35s var(--ease), border-color .35s var(--ease), box-shadow .35s var(--ease);
+}
+.edu-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--deep-space);
+  box-shadow: var(--shadow-lg);
+}
+.edu-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 6px;
+  background: linear-gradient(180deg, var(--gold), var(--gold-hover));
+}
+.edu-side {
+  display: flex; flex-direction: column; gap: 8px;
+  border-right: 1px dashed var(--line);
+  padding-right: 30px;
+}
+.edu-period {
+  font-family: var(--font-mono);
+  font-size: 13px; font-weight: 700;
+  color: var(--gold-hover);
+  letter-spacing: 0.06em;
+}
+.edu-degree {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 5vw, 60px);
+  font-weight: 900;
+  color: var(--ink);
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+.edu-main { min-width: 0; }
+.edu-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3);
+  margin-bottom: 10px;
+}
+.edu-main h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.edu-branch {
+  font-size: 15px; font-weight: 600;
+  color: var(--ink-2);
+  margin-bottom: 12px;
+}
+.edu-meta {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  font-size: 12.5px; color: var(--ink-3);
+}
+.edu-icon {
+  width: 64px; height: 64px;
+  background: var(--bg-2);
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--deep-space);
+  flex-shrink: 0;
+  transition: background-color .35s var(--ease), color .35s var(--ease);
+}
+.edu-card:hover .edu-icon {
+  background: var(--gold); color: #2a1c0a;
+}
+
+/* =========================================================================
    PRODUCTS — bento
    ========================================================================= */
 .products {
@@ -2286,21 +2380,47 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 }
 
 @media (max-width: 720px) {
-  .nav { padding: 10px 14px; }
-  .nav-brand-text small { display: none; }
+  .nav { padding: 10px 12px; gap: 10px; }
+  /* RK logo only on mobile — hide brand name + subtitle */
+  .nav-brand-text { display: none; }
   .nav-cta-pill { padding: 9px 14px; font-size: 12.5px; }
+  .nav-cta-pill .cta-arrow { display: none; }
+
+  /* sched-bar (Schedule + Gallery): show RK logo only, hide page label */
+  .sched-bar { padding: 10px 14px; gap: 8px; }
+  .sched-back { padding: 6px 10px; font-size: 12.5px; }
+  .sched-brandline span { display: none; }
+  .status-pill-mini { font-size: 10px; padding: 5px 10px; }
 
   .hero { padding: 100px 0 40px; }
   .hero-headline { font-size: clamp(36px, 12vw, 56px); }
   .ticker-pill { font-size: 14px; padding: 8px 16px 8px 10px; }
   .tp-num { width: 22px; height: 22px; font-size: 9px; }
 
-  .about, .expertise, .exp, .products, .gal-strip, .contact { padding: 80px 0; }
+  .about, .expertise, .exp, .edu, .products, .gal-strip, .contact { padding: 80px 0; }
   .quick-stats { grid-template-columns: 1fr; padding: 24px; }
   .about-quote-col { flex-direction: column; }
 
   .narrative-block { grid-template-columns: 40px 1fr; gap: 12px; }
   .nb-num { font-size: 18px; }
+
+  /* Education card stacks vertically, icon hidden */
+  .edu-card {
+    grid-template-columns: 1fr;
+    padding: 26px 26px 26px 30px;
+    gap: 18px;
+  }
+  .edu-side {
+    flex-direction: row;
+    align-items: center;
+    border-right: 0;
+    border-bottom: 1px dashed var(--line);
+    padding-right: 0;
+    padding-bottom: 16px;
+    gap: 18px;
+  }
+  .edu-degree { font-size: 36px; }
+  .edu-icon { display: none; }
 
   .bento-grid { grid-template-columns: 1fr; }
   .bento-grid > div:has(.size-lg),
@@ -2321,9 +2441,58 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   .stage-num { width: 36px; height: 36px; font-size: 13px; }
 
   .rk-row, .field-row { grid-template-columns: 1fr; }
-  .admin-content { padding: 20px 16px; }
-  .admin-topbar { padding: 14px 18px; }
-  .stats-row { grid-template-columns: repeat(2, 1fr); }
+
+  /* Admin — better mobile responsiveness */
+  .admin-content { padding: 18px 14px; }
+  .admin-topbar { padding: 12px 14px; gap: 12px; }
+  .admin-topbar h1 { font-size: 17px; }
+  .admin-topbar p { font-size: 11.5px; }
+  .admin-chip { padding: 6px 11px; font-size: 11.5px; }
+
+  .welcome-card {
+    flex-direction: column; align-items: flex-start;
+    padding: 20px;
+  }
+  .welcome-avatar { width: 44px; height: 44px; font-size: 16px; border-radius: 12px; }
+  .welcome-text h2 { font-size: 17px; }
+  .welcome-text p { font-size: 13px; }
+
+  .stats-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card { padding: 14px 14px; }
+  .stat-value { font-size: 22px; }
+  .stat-label { font-size: 10px; }
+
+  .quick-grid { grid-template-columns: 1fr; }
+  .quick-card { padding: 14px 16px; }
+
+  .control-card { padding: 4px 16px; }
+  .control-row { gap: 12px; padding: 14px 0; }
+  .control-label { font-size: 13.5px; }
+  .control-desc { font-size: 12px; }
+
+  .blocker-row { flex-direction: column; align-items: stretch; }
+  .blocker-field { flex: 1; }
+
+  .admin-form-card { padding: 20px 18px; }
+  .admin-form-card .field-row { grid-template-columns: 1fr; }
+  .admin-form-head h3 { font-size: 16px; }
+  .admin-form-head p  { font-size: 12.5px; }
+
+  .admin-list-card {
+    flex-direction: column; align-items: stretch;
+    padding: 14px 16px;
+  }
+  .row-thumb { width: 100%; aspect-ratio: 16/9; height: auto; border-radius: 12px; }
+  .row-thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .row-actions { width: 100%; justify-content: flex-end; }
+
+  .admin-actions-bar { flex-wrap: wrap; }
+  .admin-actions-bar .btn { flex: 1; justify-content: center; }
+
+  .gallery-admin-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .logs-table-wrap { font-size: 12px; }
+
   .login-card { padding: 30px 22px 24px; }
   .submit-area { flex-direction: column; align-items: stretch; }
 }
