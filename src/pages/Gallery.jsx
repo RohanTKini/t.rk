@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
@@ -126,7 +127,12 @@ export default function Gallery() {
         ))}
       </main>
 
-      {active && (
+      {/* Portal the lightbox to <body> so position:fixed escapes any
+       * transformed ancestors (e.g. .page-enter has transform: translateY(0)
+       * after its mount animation, which otherwise becomes the containing
+       * block for the fixed element and pins the lightbox to the page top
+       * instead of the viewport). */}
+      {active && createPortal(
         <div className="lbox" onClick={() => setActive(null)}>
           <button className="lbox-x" onClick={() => setActive(null)} aria-label="Close">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -147,7 +153,8 @@ export default function Gallery() {
               </div>
             )}
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       <footer className="sched-footer">
