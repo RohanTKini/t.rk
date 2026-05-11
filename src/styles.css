@@ -2204,11 +2204,20 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 .admin-form-head { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px dashed var(--line); }
 .admin-form-head h3 { margin: 0 0 4px; font-family: var(--font-display); font-weight: 800; font-size: 17px; letter-spacing: -0.02em; color: var(--ink); }
 .admin-form-head p  { margin: 0; font-size: 13px; color: var(--ink-3); line-height: 1.55; }
-.admin-form-card .field { margin-bottom: 14px; display: flex; flex-direction: column; gap: 7px; }
+.admin-form-card .field {
+  margin-bottom: 14px;
+  display: flex; flex-direction: column; gap: 7px;
+  /* Allow grid/flex children to shrink below their intrinsic content width
+   * (URL inputs with long values otherwise refuse to shrink and overflow). */
+  min-width: 0;
+}
 .admin-form-card .field label { font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
 .admin-form-card .field input,
 .admin-form-card .field textarea,
 .admin-form-card .field select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   padding: 11px 13px;
   border-radius: 10px;
   border: 1px solid var(--line);
@@ -2226,7 +2235,8 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   box-shadow: 0 0 0 4px rgba(21, 50, 67, 0.1);
 }
 .admin-form-card .field input[type="file"] { padding: 8px; background: var(--surface-2); }
-.admin-form-card .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.admin-form-card .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-width: 0; }
+.admin-form-card .field-row > .field { min-width: 0; }
 
 .admin-actions-bar {
   display: flex; gap: 10px; justify-content: flex-end;
