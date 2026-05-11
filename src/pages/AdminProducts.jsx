@@ -147,11 +147,11 @@ export default function AdminProducts() {
         </div>
         <div className="field">
           <label>Key features (one per line)</label>
-          <textarea rows="4" value={form.features} onChange={e => setForm(s => ({ ...s, features: e.target.value }))} placeholder="Verified founder profiles\nAsync deal-room\n…" />
+          <textarea rows="4" value={form.features} onChange={e => setForm(s => ({ ...s, features: e.target.value }))} placeholder={"Verified founder profiles\nAsync deal-room\nCommunity feed"} />
         </div>
         <div className="field">
           <label>Additional gallery image URLs (one per line)</label>
-          <textarea rows="3" value={form.gallery} onChange={e => setForm(s => ({ ...s, gallery: e.target.value }))} placeholder="https://image-1.jpg\nhttps://image-2.jpg" />
+          <textarea rows="3" value={form.gallery} onChange={e => setForm(s => ({ ...s, gallery: e.target.value }))} placeholder={"https://image-1.jpg\nhttps://image-2.jpg"} />
         </div>
         <div className="field-row" style={{ alignItems: 'flex-start' }}>
           <div className="field">

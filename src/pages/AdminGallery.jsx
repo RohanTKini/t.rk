@@ -56,16 +56,18 @@ export default function AdminGallery() {
   }
 
   function moveUp(idx) {
-    if (idx <= 0) return;
+    if (idx <= 0) { showToast('Already at the top'); return; }
     const next = [...list];
     [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
     Store.setGallery(next);
+    showToast('Moved up');
   }
   function moveDown(idx) {
-    if (idx >= list.length - 1) return;
+    if (idx >= list.length - 1) { showToast('Already at the bottom'); return; }
     const next = [...list];
     [next[idx + 1], next[idx]] = [next[idx], next[idx + 1]];
     Store.setGallery(next);
+    showToast('Moved down');
   }
 
   function onFile(e) {
@@ -134,10 +136,18 @@ export default function AdminGallery() {
               {item.caption && <div className="row-sub">{item.caption}</div>}
             </div>
             <div className="gallery-admin-actions">
-              <button className="mini-btn" onClick={() => moveUp(i)} title="Move up">↑</button>
-              <button className="mini-btn" onClick={() => moveDown(i)} title="Move down">↓</button>
-              <button className="mini-btn" onClick={() => startEdit(item)} title="Edit">✎</button>
-              <button className="mini-btn danger" onClick={() => remove(item.id)} title="Delete">×</button>
+              <button type="button" className="mini-btn" disabled={i === 0}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); moveUp(i); }}
+                aria-label="Move up" title="Move up">↑</button>
+              <button type="button" className="mini-btn" disabled={i === list.length - 1}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); moveDown(i); }}
+                aria-label="Move down" title="Move down">↓</button>
+              <button type="button" className="mini-btn"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); startEdit(item); }}
+                aria-label="Edit" title="Edit">✎</button>
+              <button type="button" className="mini-btn danger"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); remove(item.id); }}
+                aria-label="Delete" title="Delete">×</button>
             </div>
           </div>
         ))}

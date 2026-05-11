@@ -1539,17 +1539,26 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 
 /* lightbox */
 .lbox {
-  position: fixed; inset: 0; z-index: 100;
+  position: fixed;
+  /* Use explicit edges + dvh on mobile so iOS / Android dynamic toolbars
+   * don't push the lightbox off-viewport. */
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw; height: 100dvh;
+  z-index: 100;
   background: rgba(7, 17, 24, 0.92);
   backdrop-filter: blur(8px);
   display: flex; align-items: center; justify-content: center;
   padding: 28px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   animation: fadeIn .35s var(--ease) both;
 }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 .lbox-card {
   position: relative;
-  max-width: 1000px; max-height: 90vh;
+  max-width: 1000px;
+  width: 100%;
+  margin: auto;            /* fallback centring if flex centring is overridden */
   background: var(--surface);
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -1561,8 +1570,8 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   from { opacity: 0; transform: scale(0.92); }
   to   { opacity: 1; transform: scale(1); }
 }
-.lbox-img { background: #000; max-height: 70vh; }
-.lbox-img img { max-height: 70vh; width: 100%; object-fit: contain; }
+.lbox-img { background: #000; }
+.lbox-img img { max-height: 75vh; width: 100%; object-fit: contain; display: block; }
 .lbox-meta { padding: 18px 24px; border-top: 1px solid var(--line); }
 .lbox-loc {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1944,7 +1953,12 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   display: flex; flex-direction: column;
   border-right: 1px solid var(--dark-line);
   position: sticky; top: 0; height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
+.admin-sidebar::-webkit-scrollbar { width: 4px; }
+.admin-sidebar::-webkit-scrollbar-thumb { background: var(--dark-line); border-radius: 2px; }
 .admin-brand {
   display: flex; align-items: center; gap: 12px;
   padding: 8px 10px 18px;
@@ -2287,17 +2301,23 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   padding: 8px 10px; border-top: 1px solid var(--line);
 }
 .mini-btn {
-  width: 30px; height: 30px;
+  width: 34px; height: 34px;
   border-radius: 8px;
   background: var(--surface-2);
-  font-size: 14px; font-weight: 700;
+  font-size: 15px; font-weight: 700;
   color: var(--ink-2);
   display: inline-flex; align-items: center; justify-content: center;
-  transition: background-color .2s, color .2s;
+  border: 1px solid var(--line);
+  transition: background-color .2s, color .2s, border-color .2s, transform .12s;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
-.mini-btn:hover { background: var(--bg-2); color: var(--ink); }
+.mini-btn:hover:not(:disabled) { background: var(--bg-2); color: var(--ink); border-color: var(--deep-space); }
+.mini-btn:active:not(:disabled) { transform: scale(0.94); }
+.mini-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .mini-btn.danger { color: var(--danger); }
-.mini-btn.danger:hover { background: rgba(210, 74, 74, 0.12); }
+.mini-btn.danger:hover:not(:disabled) { background: rgba(210, 74, 74, 0.12); border-color: rgba(210, 74, 74, 0.4); }
 
 .logs-card {
   background: var(--surface);
@@ -2704,8 +2724,13 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 
   .admin-shell { grid-template-columns: 1fr; }
   .admin-sidebar {
-    position: fixed; left: 0; top: 0; height: 100vh; z-index: 50;
+    position: fixed; left: 0; top: 0; z-index: 50;
     width: 280px;
+    /* Use dvh so the sidebar stretches to the actual mobile viewport height
+     * (accounting for the dynamic address bar). overflow-y: auto on the
+     * base rule lets the menu scroll if content exceeds the screen. */
+    height: 100dvh;
+    max-height: 100dvh;
     transform: translateX(-100%);
     transition: transform .35s var(--ease);
   }
@@ -2738,7 +2763,17 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   .tp-num { width: 22px; height: 22px; font-size: 9px; }
 
   
-  .quick-stats { grid-template-columns: 1fr; padding: 24px; }
+  .quick-stats {
+    grid-template-columns: 1fr;
+    padding: 22px 24px;
+    gap: 14px;
+  }
+  /* Tighter typography per-item so the four cards stack compactly on phones */
+  .qs-item { display: flex; flex-direction: column; gap: 2px; }
+  .quick-stats .qs-key { margin-bottom: 2px; }
+  .quick-stats .qs-val { font-size: 24px; line-height: 1.05; }
+  .quick-stats .qs-val.tiny { font-size: 15px; line-height: 1.2; }
+  .quick-stats .qs-sub { margin-top: 0; font-size: 11.5px; }
   .about-quote-col { flex-direction: column; }
 
   .narrative-block { grid-template-columns: 40px 1fr; gap: 12px; }
@@ -2835,6 +2870,12 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 
   .login-card { padding: 30px 22px 24px; }
   .submit-area { flex-direction: column; align-items: stretch; }
+
+  /* Lightbox tighter on phones — image gets ~62vh, meta sits below */
+  .lbox { padding: 16px; }
+  .lbox-img img { max-height: 62vh; }
+  .lbox-x { top: 14px; right: 14px; width: 38px; height: 38px; }
+  .lbox-meta { padding: 14px 18px; }
 
   /* Product Detail page on phones */
   .pd-hero { padding: 30px 18px 40px; }
