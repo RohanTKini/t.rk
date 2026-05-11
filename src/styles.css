@@ -74,10 +74,15 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 .muted { color: var(--ink-3); }
 ::selection { background: var(--deep-space); color: var(--ivory); }
 
-.page-enter { animation: pageIn .55s var(--ease) both; }
+/* Opacity-only fade so the wrapper does NOT keep a transform applied
+ * after the animation completes. Any non-`none` transform on .page-enter
+ * makes it the containing block for descendant `position: fixed` elements,
+ * which breaks the admin sidebar drawer (anchored to the document instead
+ * of the viewport when the page is scrolled). */
+.page-enter { animation: pageIn .45s var(--ease) both; }
 @keyframes pageIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 
 .reveal {
