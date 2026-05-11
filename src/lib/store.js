@@ -68,26 +68,57 @@ const DEFAULT_PRODUCTS = [
   {
     id: 'p1',
     name: 'Vision Hub',
+    tagline: "Connecting India's next generation of founders.",
     image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=900&q=80',
     launchDate: '2026-03-01',
     link: 'https://example.com',
-    description: 'A collaboration platform connecting founders, mentors and investors across India — built for the next wave of bold ideas.'
+    status: 'In Development',
+    description: 'A collaboration platform connecting founders, mentors and investors across India — built for the next wave of bold ideas.',
+    longDescription: 'Vision Hub is the meeting point between ambition and access. It pairs verified founders with mentors, peers and capital through warm, async intros — cutting the noise out of building. Roadmap is community-led, with quarterly cohorts shaping what ships next.',
+    techStack: ['React', 'Node.js', 'Firebase', 'Tailwind'],
+    features: [
+      'Verified founder & mentor profiles with reputation signals',
+      'Async deal-room with built-in NDA support',
+      'Community feed organised by topic and stage',
+      'Calendar-aware intro scheduling and follow-ups'
+    ],
+    gallery: [
+      'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=900&q=80',
+      'https://images.unsplash.com/photo-1664575600796-ffa828c5cb6e?w=900&q=80'
+    ]
   },
   {
     id: 'p2',
     name: 'Future Forge',
+    tagline: 'An incubation studio for early-stage builders.',
     image: 'https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=900&q=80',
     launchDate: '2026-06-15',
     link: 'https://example.com',
-    description: 'An incubation studio turning early-stage ideas into shipped products — sprint-driven, design-led, founder-friendly.'
+    status: 'Coming Soon',
+    description: 'An incubation studio turning early-stage ideas into shipped products — sprint-driven, design-led, founder-friendly.',
+    longDescription: 'Future Forge runs 90-day sprint cycles to take ideas from a one-line pitch to a shippable v1. Founders bring the conviction; the studio brings the design, engineering and go-to-market muscle.',
+    techStack: ['Figma', 'TypeScript', 'Next.js', 'Supabase'],
+    features: [
+      '90-day sprint methodology with milestone gates',
+      'In-house design + engineering pod per cohort',
+      'Founder coaching alongside execution',
+      'Pre-baked GTM templates for launch week'
+    ],
+    gallery: []
   },
   {
     id: 'p3',
     name: 'NextGen Labs',
+    tagline: '',
     image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=900&q=80',
     launchDate: '2026-11-20',
     link: '',
-    description: ''
+    status: 'Concept',
+    description: '',
+    longDescription: '',
+    techStack: [],
+    features: [],
+    gallery: []
   }
 ];
 
@@ -105,6 +136,7 @@ const DEFAULT_GALLERY = [
 const DEFAULT_SOCIALS = [
   { id: 'instagram', name: 'Instagram', href: 'https://instagram.com/' },
   { id: 'linkedin',  name: 'LinkedIn',  href: 'https://linkedin.com/' },
+  { id: 'facebook',  name: 'Facebook',  href: 'https://facebook.com/' },
   { id: 'x',         name: 'X',         href: 'https://x.com/' },
   { id: 'whatsapp',  name: 'WhatsApp',  href: 'https://wa.me/916361529586' }
 ];

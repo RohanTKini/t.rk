@@ -13,8 +13,14 @@ export default function AdminProducts() {
 
   const list = state.products || [];
 
-  const [form, setForm] = useState({ name: '', image: '', launchDate: '', link: '', description: '' });
+  const [form, setForm] = useState({
+    name: '', tagline: '', image: '', launchDate: '', link: '', status: '',
+    description: '', longDescription: '',
+    techStack: '', features: '', gallery: ''
+  });
   const [editing, setEditing] = useState(null);
+
+  const STATUS_OPTIONS = ['', 'Live', 'In Development', 'Coming Soon', 'Concept'];
   const [toast, setToast] = useState({ msg: '', show: false });
   const showToast = (m) => {
     setToast({ msg: m, show: true });
@@ -23,20 +29,32 @@ export default function AdminProducts() {
   };
 
   function reset() {
-    setForm({ name: '', image: '', launchDate: '', link: '', description: '' });
+    setForm({
+      name: '', tagline: '', image: '', launchDate: '', link: '', status: '',
+      description: '', longDescription: '',
+      techStack: '', features: '', gallery: ''
+    });
     setEditing(null);
   }
 
   function save(e) {
     e?.preventDefault?.();
     if (!form.name.trim()) { showToast('Product name is required'); return; }
+    const splitLines = (s) => s.split('\n').map(x => x.trim()).filter(Boolean);
+    const splitCommas = (s) => s.split(',').map(x => x.trim()).filter(Boolean);
     const entry = {
       id: editing || newId(),
       name: form.name.trim(),
+      tagline: form.tagline.trim(),
       image: form.image.trim(),
       launchDate: form.launchDate,
       link: form.link.trim(),
-      description: form.description.trim()
+      status: form.status.trim(),
+      description: form.description.trim(),
+      longDescription: form.longDescription.trim(),
+      techStack: splitCommas(form.techStack),
+      features:  splitLines(form.features),
+      gallery:   splitLines(form.gallery)
     };
     const next = editing ? list.map(x => x.id === editing ? entry : x) : [entry, ...list];
     Store.setProducts(next);
@@ -48,10 +66,16 @@ export default function AdminProducts() {
     setEditing(item.id);
     setForm({
       name: item.name || '',
+      tagline: item.tagline || '',
       image: item.image || '',
       launchDate: item.launchDate || '',
       link: item.link || '',
-      description: item.description || ''
+      status: item.status || '',
+      description: item.description || '',
+      longDescription: item.longDescription || '',
+      techStack: Array.isArray(item.techStack) ? item.techStack.join(', ') : (item.techStack || ''),
+      features:  Array.isArray(item.features)  ? item.features.join('\n')   : (item.features || ''),
+      gallery:   Array.isArray(item.gallery)   ? item.gallery.join('\n')    : (item.gallery || '')
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -89,17 +113,45 @@ export default function AdminProducts() {
             <input value={form.name} onChange={e => setForm(s => ({ ...s, name: e.target.value }))} placeholder="e.g. PrithviMitr" />
           </div>
           <div className="field">
-            <label>Launch date</label>
-            <input type="date" value={form.launchDate} onChange={e => setForm(s => ({ ...s, launchDate: e.target.value }))} />
+            <label>Status</label>
+            <select value={form.status} onChange={e => setForm(s => ({ ...s, status: e.target.value }))}>
+              {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s || '— Choose —'}</option>)}
+            </select>
           </div>
         </div>
         <div className="field">
-          <label>Project link</label>
-          <input type="url" value={form.link} onChange={e => setForm(s => ({ ...s, link: e.target.value }))} placeholder="https://example.com" />
+          <label>Tagline (1-line subtitle)</label>
+          <input value={form.tagline} onChange={e => setForm(s => ({ ...s, tagline: e.target.value }))} placeholder="A short, punchy line about the product." />
+        </div>
+        <div className="field-row">
+          <div className="field">
+            <label>Launch date</label>
+            <input type="date" value={form.launchDate} onChange={e => setForm(s => ({ ...s, launchDate: e.target.value }))} />
+          </div>
+          <div className="field">
+            <label>Project link</label>
+            <input type="url" value={form.link} onChange={e => setForm(s => ({ ...s, link: e.target.value }))} placeholder="https://example.com" />
+          </div>
         </div>
         <div className="field">
-          <label>Description</label>
-          <textarea rows="3" value={form.description} onChange={e => setForm(s => ({ ...s, description: e.target.value }))} placeholder="A short pitch — what it is, who it's for, why it matters." />
+          <label>Short description (shown on product card)</label>
+          <textarea rows="2" value={form.description} onChange={e => setForm(s => ({ ...s, description: e.target.value }))} placeholder="A short pitch — what it is, who it's for, why it matters." />
+        </div>
+        <div className="field">
+          <label>Long description (detail page overview)</label>
+          <textarea rows="4" value={form.longDescription} onChange={e => setForm(s => ({ ...s, longDescription: e.target.value }))} placeholder="The fuller story — context, audience, what makes it different." />
+        </div>
+        <div className="field">
+          <label>Tech stack (comma-separated)</label>
+          <input value={form.techStack} onChange={e => setForm(s => ({ ...s, techStack: e.target.value }))} placeholder="React, Node.js, Firebase, Tailwind" />
+        </div>
+        <div className="field">
+          <label>Key features (one per line)</label>
+          <textarea rows="4" value={form.features} onChange={e => setForm(s => ({ ...s, features: e.target.value }))} placeholder="Verified founder profiles\nAsync deal-room\n…" />
+        </div>
+        <div className="field">
+          <label>Additional gallery image URLs (one per line)</label>
+          <textarea rows="3" value={form.gallery} onChange={e => setForm(s => ({ ...s, gallery: e.target.value }))} placeholder="https://image-1.jpg\nhttps://image-2.jpg" />
         </div>
         <div className="field-row" style={{ alignItems: 'flex-start' }}>
           <div className="field">

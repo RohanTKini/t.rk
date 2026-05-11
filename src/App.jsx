@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import Portfolio from './pages/Portfolio.jsx';
 import Schedule from './pages/Schedule.jsx';
 import Gallery from './pages/Gallery.jsx';
+import ProductDetail from './pages/ProductDetail.jsx';
 import AdminLogin from './pages/AdminLogin.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Logs from './pages/Logs.jsx';
@@ -42,6 +43,7 @@ export default function App() {
           <Route path="/" element={<Portfolio />} />
           <Route path="/schedule" element={<Schedule />} />
           <Route path="/gallery" element={<Gallery />} />
+          <Route path="/products/:id" element={<ProductDetail />} />
           <Route path="/admin" element={<AdminLogin />} />
           <Route path="/admin/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/admin/logs" element={<ProtectedRoute><Logs /></ProtectedRoute>} />

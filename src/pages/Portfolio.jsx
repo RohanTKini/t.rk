@@ -164,7 +164,7 @@ function ContactBlock({ businessEmail, personalEmail, phone, whatsapp }) {
   );
 }
 
-/* ── PRODUCT — bento card with size variant ───────────────────────────── */
+/* ── PRODUCT — bento card with size variant; tapping opens detail page ── */
 function ProductCard({ product, size = 'md', index }) {
   const hasImage = product.image && product.image.trim().length > 0;
   const hasName = product.name && product.name.trim().length > 0;
@@ -183,27 +183,27 @@ function ProductCard({ product, size = 'md', index }) {
   }
 
   return (
-    <article className={`bento-card size-${size}`}>
+    <Link to={`/products/${product.id}`} className={`bento-card size-${size}`}>
       <div className="bento-image">
         {hasImage
           ? <img src={product.image} alt={product.name || 'Product'} loading="lazy" />
           : <div className="bento-fallback"><RkLogo size={56} /><span>Image coming soon</span></div>}
         {product.launchDate && <span className="bento-launch">{formatMonthYear(product.launchDate)}</span>}
         <span className="bento-num">{String(index + 1).padStart(2, '0')}</span>
+        {product.status && <span className="bento-status">{product.status}</span>}
       </div>
       <div className="bento-body">
         <h3>{product.name || 'Untitled'}</h3>
+        {product.tagline && <p className="bento-tagline">{product.tagline}</p>}
         {product.description
           ? <p>{product.description}</p>
           : <p className="muted">Description coming soon.</p>}
-        {product.link && (
-          <a href={product.link} target="_blank" rel="noopener noreferrer" className="bento-link">
-            Visit project
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
-          </a>
-        )}
+        <span className="bento-link">
+          View details
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+        </span>
       </div>
-    </article>
+    </Link>
   );
 }
 
@@ -425,7 +425,7 @@ export default function Portfolio() {
                 </div>
               )}
               <div className="about-portrait">
-                <img src="/rohan.jpeg" alt="Rohan Kini" />
+                <img src="/leadership.png" alt="Rohan Kini — Leadership" />
               </div>
             </aside>
             <div className="about-narrative reveal from-right">
@@ -505,26 +505,35 @@ export default function Portfolio() {
               <p>Rohan is adding his roles. Check back shortly.</p>
             </div>
           ) : (
-            <div className="spine">
-              <div className="spine-line" />
+            <div className="exp-ledger">
               {experiences.map((e, i) => {
-                const side = i % 2 === 0 ? 'left' : 'right';
+                /* Pull the start year out of the period string ("Sep 2021 — Present" → "2021"). */
+                const yearMatch = (e.period || '').match(/(20\d{2})/);
+                const year = yearMatch ? yearMatch[1] : '—';
                 return (
-                  <div key={e.id || i} className={`spine-item ${side} reveal`}>
-                    <div className="spine-marker">
-                      <span>{String(i + 1).padStart(2, '0')}</span>
+                  <article key={e.id || i} className={`exp-ledger-row reveal delay-${(i % 4) + 1}`}>
+                    <div className="elr-year">
+                      <span className="elr-year-num">{year}</span>
+                      <span className="elr-year-tag">{String(i + 1).padStart(2, '0')} / Chapter</span>
                     </div>
-                    <div className="spine-card">
-                      <div className="spine-period">{e.period}</div>
-                      <div className="spine-role">{e.role}</div>
-                      <div className="spine-org">{e.org}</div>
-                      <div className="spine-meta">
-                        {e.type && <span>{e.type}</span>}
-                        {e.duration && <span>· {e.duration}</span>}
-                        {e.location && <span>· {e.location}</span>}
+                    <div className="elr-rule" />
+                    <div className="elr-body">
+                      <div className="elr-headline">
+                        <h3 className="elr-role">{e.role}</h3>
+                        <span className="elr-arrow">↗</span>
                       </div>
+                      <div className="elr-org">@ {e.org}</div>
+                      <div className="elr-period">{e.period}</div>
                     </div>
-                  </div>
+                    <div className="elr-meta">
+                      {e.type && <span className="elr-tag">{e.type}</span>}
+                      {e.duration && <span className="elr-tag muted">{e.duration}</span>}
+                      {e.location && <span className="elr-loc">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        {e.location}
+                      </span>}
+                    </div>
+                  </article>
                 );
               })}
             </div>

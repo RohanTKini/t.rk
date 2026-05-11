@@ -200,7 +200,7 @@ export default function Dashboard() {
         <div className="control-row">
           <div className="control-info">
             <div className="control-label">
-              <svg className="icon icon-md" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: -4, marginRight: 6 }}><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: -4, marginRight: 6, flexShrink: 0 }}><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
               Pause All Bookings
             </div>
             <div className="control-desc">Disables the booking form. Visitors see a "Bookings Paused" notice. Date blocking is unavailable while this is on.</div>
@@ -213,7 +213,7 @@ export default function Dashboard() {
         <div className="control-row">
           <div className="control-info">
             <div className="control-label">
-              <svg className="icon icon-md" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: -4, marginRight: 6 }}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ verticalAlign: -4, marginRight: 6, flexShrink: 0 }}><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
               Block Specific Dates
             </div>
             <div className="control-desc">Block specific dates when you're unavailable. Visitors see a warning if they try to book then.</div>
