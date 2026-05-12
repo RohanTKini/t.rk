@@ -4,6 +4,7 @@ import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
 import { formatMonthYear } from '../lib/helpers.js';
 import RkLogo from '../components/RkLogo.jsx';
+import SmartImage from '../components/SmartImage.jsx';
 import SocialIcon from '../components/SocialIcons.jsx';
 
 function smoothScroll(e, id) {
@@ -186,7 +187,7 @@ function ProductCard({ product, size = 'md', index }) {
     <Link to={`/products/${product.id}`} className={`bento-card size-${size}`}>
       <div className="bento-image">
         {hasImage
-          ? <img src={product.image} alt={product.name || 'Product'} loading="lazy" />
+          ? <SmartImage src={product.image} alt={product.name || 'Product'} loading="lazy" fallbackSize={56} />
           : <div className="bento-fallback"><RkLogo size={56} /><span>Image coming soon</span></div>}
         {product.launchDate && <span className="bento-launch">{formatMonthYear(product.launchDate)}</span>}
         <span className="bento-num">{String(index + 1).padStart(2, '0')}</span>
@@ -233,7 +234,7 @@ function GalleryStrip({ items }) {
       <div className="hrail" ref={railRef}>
         {items.slice(0, 10).map((g, i) => (
           <Link key={g.id || i} to="/gallery" className={`hrail-card v-${i % 3}`}>
-            <img src={g.image} alt={g.caption || g.location || 'Gallery'} loading="lazy" />
+            <SmartImage src={g.image} alt={g.caption || g.location || 'Gallery'} loading="lazy" fallbackSize={48} />
             <div className="hrail-overlay">
               {g.location && (
                 <div className="hrail-loc">
@@ -369,7 +370,7 @@ export default function Portfolio() {
             <div className="portrait-wrap">
               <div className="portrait-ring" />
               <div className="portrait">
-                <img src="/rohan.jpeg" alt="Rohan Kini" />
+                <SmartImage src="/rohan.jpeg" alt="Rohan Kini" fallbackSize={96} />
               </div>
               <div className="floating-chip fc-1">
                 <span className="fc-dot" /> Founder
@@ -425,7 +426,7 @@ export default function Portfolio() {
                 </div>
               )}
               <div className="about-portrait">
-                <img src="/leadership.png" alt="Rohan Kini — Leadership" />
+                <SmartImage src="/leadership.png" alt="Rohan Kini — Leadership" fallbackSize={96} />
               </div>
             </aside>
             <div className="about-narrative reveal from-right">

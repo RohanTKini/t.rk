@@ -4,6 +4,7 @@ import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
 import { formatMonthYear } from '../lib/helpers.js';
 import RkLogo from '../components/RkLogo.jsx';
+import SmartImage from '../components/SmartImage.jsx';
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -93,7 +94,7 @@ export default function ProductDetail() {
           </div>
           <div className="pd-hero-art reveal from-right">
             {hasImage
-              ? <img src={product.image} alt={product.name} />
+              ? <SmartImage src={product.image} alt={product.name} fallbackSize={96} />
               : <div className="pd-hero-fallback"><RkLogo size={96} /><span>Image coming soon</span></div>}
             <span className="pd-hero-tag">{String(products.findIndex(p => p.id === product.id) + 1).padStart(2, '0')}</span>
           </div>
@@ -166,7 +167,7 @@ export default function ProductDetail() {
             <div className="pd-gallery-grid">
               {subGallery.map((src, i) => (
                 <div key={i} className="pd-gallery-tile">
-                  <img src={src} alt={`${product.name} — ${i + 1}`} loading="lazy" />
+                  <SmartImage src={src} alt={`${product.name} — ${i + 1}`} loading="lazy" fallbackSize={48} />
                 </div>
               ))}
             </div>
@@ -185,9 +186,9 @@ export default function ProductDetail() {
             <div className="pd-more-grid">
               {otherProducts.map((p, i) => (
                 <Link key={p.id} to={`/products/${p.id}`} className={`pd-more-card reveal delay-${(i % 3) + 1}`}>
-                  {p.image
-                    ? <div className="pd-more-img"><img src={p.image} alt={p.name} loading="lazy" /></div>
-                    : <div className="pd-more-img"><RkLogo size={56} /></div>}
+                  <div className="pd-more-img">
+                    <SmartImage src={p.image} alt={p.name} loading="lazy" fallbackSize={42} />
+                  </div>
                   <div className="pd-more-body">
                     <div className="pd-more-name">{p.name || 'Untitled'}</div>
                     {p.tagline && <div className="pd-more-tag">{p.tagline}</div>}

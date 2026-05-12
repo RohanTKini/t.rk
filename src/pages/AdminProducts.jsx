@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '../components/AdminLayout.jsx';
 import Toast from '../components/Toast.jsx';
 import RkLogo from '../components/RkLogo.jsx';
+import SmartImage from '../components/SmartImage.jsx';
 import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
 import { newId, formatMonthYear } from '../lib/helpers.js';
@@ -167,7 +168,7 @@ export default function AdminProducts() {
         </div>
 
         {form.image ? (
-          <div className="image-preview"><img src={form.image} alt="preview" /></div>
+          <div className="image-preview"><SmartImage src={form.image} alt="preview" fallbackSize={48} /></div>
         ) : (
           <div className="image-preview empty"><RkLogo size={48} /><span>Image preview will appear here</span></div>
         )}
@@ -192,7 +193,7 @@ export default function AdminProducts() {
         {list.map((item, i) => (
           <div key={item.id} className={`admin-list-card reveal delay-${(i % 5) + 1}`}>
             <div className="row-thumb">
-              {item.image ? <img src={item.image} alt={item.name} /> : <RkLogo size={42} />}
+              {item.image ? <SmartImage src={item.image} alt={item.name} fallbackSize={32} /> : <RkLogo size={42} />}
             </div>
             <div style={{ flex: 1, minWidth: 0 }}>
               <div className="row-title">{item.name || <span className="muted">(untitled)</span>}</div>

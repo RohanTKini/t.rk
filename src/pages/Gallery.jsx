@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
 import RkLogo from '../components/RkLogo.jsx';
+import SmartImage from '../components/SmartImage.jsx';
 
 /* Bento sizing rotation — gives the mosaic visual rhythm without
  * needing the admin to set sizes. Anchors to index, so reordering
@@ -111,7 +112,7 @@ export default function Gallery() {
             key={g.id || i}
             className={`bento-pic size-${sizeFor(i)} reveal delay-${(i % 5) + 1}`}
             onClick={() => setActive(g)}>
-            <img src={g.image} alt={g.caption || g.location || 'Gallery item'} loading="lazy" />
+            <SmartImage src={g.image} alt={g.caption || g.location || 'Gallery item'} loading="lazy" fallbackSize={42} />
             <span className="bp-num">{String(i + 1).padStart(2, '0')}</span>
             <div className="bp-overlay">
               {g.location && (
@@ -139,7 +140,7 @@ export default function Gallery() {
           </button>
           <div className="lbox-card" onClick={(e) => e.stopPropagation()}>
             <div className="lbox-img">
-              <img src={active.image} alt={active.caption || active.location || 'Gallery item'} />
+              <SmartImage src={active.image} alt={active.caption || active.location || 'Gallery item'} fallbackSize={120} />
             </div>
             {(active.location || active.caption) && (
               <div className="lbox-meta">

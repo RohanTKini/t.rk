@@ -9,6 +9,7 @@ import {
   checkDate, checkTime, checkEndAfterStart, todayISO
 } from '../lib/helpers.js';
 import RkLogo from '../components/RkLogo.jsx';
+import SmartImage from '../components/SmartImage.jsx';
 import Toast from '../components/Toast.jsx';
 
 const DEFAULT_ADDRESS = 'Mangaluru, Karnataka, India';
@@ -160,7 +161,7 @@ export default function Schedule() {
           {/* LEFT — info column */}
           <aside className="sched-side">
             <div className="side-hero reveal">
-              <div className="side-portrait"><img src="/rohan.jpeg" alt="Rohan Kini" /></div>
+              <div className="side-portrait"><SmartImage src="/rohan.jpeg" alt="Rohan Kini" fallbackSize={48} /></div>
               <h1>Book a slot<br/>with <em>Rohan Kini</em></h1>
               <p>Schedule a one-on-one — about ideas, ventures, partnerships, or anything in between.</p>
             </div>

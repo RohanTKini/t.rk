@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AdminLayout from '../components/AdminLayout.jsx';
 import Toast from '../components/Toast.jsx';
 import RkLogo from '../components/RkLogo.jsx';
+import SmartImage from '../components/SmartImage.jsx';
 import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
 import { newId } from '../lib/helpers.js';
@@ -93,7 +94,7 @@ export default function AdminGallery() {
         </div>
 
         {form.image ? (
-          <div className="image-preview"><img src={form.image} alt="preview" /></div>
+          <div className="image-preview"><SmartImage src={form.image} alt="preview" fallbackSize={48} /></div>
         ) : (
           <div className="image-preview empty"><RkLogo size={48} /><span>Image preview will appear here</span></div>
         )}
@@ -115,7 +116,7 @@ export default function AdminGallery() {
         )}
         {list.map((item, i) => (
           <div key={item.id} className={`gallery-admin-tile reveal delay-${(i % 6) + 1}`}>
-            <img src={item.image} alt={item.caption || item.location || 'Gallery item'} />
+            <SmartImage src={item.image} alt={item.caption || item.location || 'Gallery item'} fallbackSize={36} />
             <div className="gallery-admin-meta">
               {item.location && <div className="row-title" style={{ fontSize: 13 }}>{item.location}</div>}
               {item.caption && <div className="row-sub">{item.caption}</div>}
