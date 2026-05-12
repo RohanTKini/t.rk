@@ -54,7 +54,6 @@ export default function AdminLogin() {
         src="/admin-bg.mp4"
         autoPlay
         muted
-        loop
         playsInline
         preload="auto"
       />
