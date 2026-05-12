@@ -4,6 +4,7 @@ import Portfolio from './pages/Portfolio.jsx';
 import Schedule from './pages/Schedule.jsx';
 import Gallery from './pages/Gallery.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
+import CustomCursor from './components/CustomCursor.jsx';
 import AdminLogin from './pages/AdminLogin.jsx';
 import Dashboard from './pages/Dashboard.jsx';
 import Logs from './pages/Logs.jsx';
@@ -37,6 +38,7 @@ function PageWrap({ children }) {
 export default function App() {
   return (
     <>
+      <CustomCursor />
       <ScrollToTop />
       <PageWrap>
         <Routes>

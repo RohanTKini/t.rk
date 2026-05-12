@@ -67,6 +67,67 @@ img { max-width: 100%; display: block; }
 /* Safety net: any SVG without an explicit width attribute caps at 24px instead of expanding to fill its container. */
 svg:not([width]) { width: 1.25em; height: 1.25em; flex-shrink: 0; }
 
+/* ── CUSTOM CURSOR ─────────────────────────────────────────────────────
+ * Trailing ring + center dot, gold-on-dark to match the brand. Only
+ * active on devices with a fine pointer (mouse) — touch users get the
+ * OS default. The ring eases toward the pointer, the dot snaps. */
+@media (pointer: fine) {
+  html, body { cursor: none; }
+  /* Most interactive elements still hide the system cursor so the custom
+   * one is the only visible cursor. iframes (maps) keep their own cursor
+   * because they're a separate document. */
+  a, button, input, textarea, select, label,
+  [role="button"], .nav-link, .nav-mid a, .nav-cta-pill,
+  .btn, .mini-btn, .topbar-btn, .pw-toggle,
+  .mode-chip, .fchip, .ftog, .tab-btn { cursor: none; }
+}
+.cursor-ring,
+.cursor-dot {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  will-change: transform;
+}
+.cursor-ring {
+  width: 36px; height: 36px;
+  margin: -18px 0 0 -18px;            /* centre on the pointer */
+  border: 1.5px solid var(--gold);
+  border-radius: 50%;
+  background: rgba(200, 155, 79, 0.04);
+  transition:
+    width .25s var(--ease),
+    height .25s var(--ease),
+    margin .25s var(--ease),
+    background-color .25s var(--ease),
+    border-color .25s var(--ease),
+    opacity .3s var(--ease);
+  mix-blend-mode: difference;          /* keeps the ring visible on any background */
+}
+.cursor-ring.is-hover {
+  width: 60px; height: 60px;
+  margin: -30px 0 0 -30px;
+  background: rgba(200, 155, 79, 0.18);
+  border-color: rgba(200, 155, 79, 0.6);
+}
+.cursor-ring.is-down {
+  width: 22px; height: 22px;
+  margin: -11px 0 0 -11px;
+  background: rgba(200, 155, 79, 0.35);
+}
+.cursor-dot {
+  width: 6px; height: 6px;
+  margin: -3px 0 0 -3px;
+  background: var(--gold);
+  border-radius: 50%;
+  z-index: 10000;
+  transition: opacity .3s var(--ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cursor-ring { transition: opacity .2s; }
+}
+
 /* SmartImage fallback: fills the slot the <img> would have used and centres
  * the RK monogram on a soft gradient. Inherits the parent's dimensions via
  * width/height: 100%, so it slots into existing layouts (avatars, bento

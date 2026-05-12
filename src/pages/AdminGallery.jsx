@@ -101,7 +101,7 @@ export default function AdminGallery() {
 
         <div className="admin-actions-bar">
           {editing && <button type="button" className="btn btn-ghost" onClick={reset}>Cancel edit</button>}
-          <button type="submit" className="btn btn-primary">{editing ? 'Update Image' : '+ Add to Gallery'}</button>
+          <button type="submit" className="btn btn-primary">{editing ? 'Update' : '+ Add to Gallery'}</button>
         </div>
       </form>
 
