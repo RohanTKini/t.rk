@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import RkLogo from '../components/RkLogo.jsx';
 
@@ -12,18 +12,10 @@ export default function AdminLogin() {
   const [err, setErr] = useState(false);
   const [showPw, setShowPw] = useState(false);
 
-  /* Two-stage reveal:
-   *   - 0s..2s  → fullscreen cinematic video, form hidden
-   *   - 2s+     → backdrop darkens, glass form pops up smoothly */
-  const [revealed, setRevealed] = useState(false);
-
   useEffect(() => {
     if (sessionStorage.getItem('rk_admin_auth') === 'true') {
       navigate('/admin/dashboard', { replace: true });
-      return;
     }
-    const t = setTimeout(() => setRevealed(true), 2000);
-    return () => clearTimeout(t);
   }, [navigate]);
 
   /* Some mobile browsers block autoplay if the video isn't muted before
@@ -47,7 +39,7 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className={`login-shell login-cinematic ${revealed ? 'is-revealed' : ''}`}>
+    <div className="login-shell login-cinematic is-revealed">
       <video
         ref={videoRef}
         className="login-bg-video"

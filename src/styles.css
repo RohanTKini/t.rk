@@ -1901,13 +1901,11 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   position: absolute; inset: 0;
   z-index: 1;
   background: linear-gradient(135deg, rgba(7, 17, 24, 0.55) 0%, rgba(14, 34, 48, 0.65) 100%);
-  opacity: 0;
-  transition: opacity 1s var(--ease);
+  opacity: 1;
   pointer-events: none;
 }
-.login-cinematic.is-revealed .login-bg-tint { opacity: 1; }
 
-/* Glass form: hidden + scaled down for the first 2s, then pops in. */
+/* Glass form — appears together with the video on first paint. */
 .login-cinematic .login-card.glass {
   position: relative;
   z-index: 2;
@@ -1919,16 +1917,11 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
     0 20px 60px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
   color: var(--ivory);
-  opacity: 0;
-  transform: translateY(24px) scale(0.96);
-  transition: opacity .9s var(--ease), transform .9s var(--ease);
-  animation: none;           /* override the popIn from .login-card */
-  pointer-events: none;
+  animation: glassIn .8s var(--ease) both;
 }
-.login-cinematic.is-revealed .login-card.glass {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  pointer-events: auto;
+@keyframes glassIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 /* Override interior text colors so they read on the glass surface */
