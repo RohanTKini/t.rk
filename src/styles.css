@@ -1879,6 +1879,94 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
     radial-gradient(circle at 20% 80%, rgba(200, 155, 79, 0.18), transparent 50%),
     linear-gradient(135deg, var(--deep-space) 0%, var(--yale-blue) 100%);
 }
+
+/* ── Cinematic admin login: video bg + delayed glass form ──────────── */
+.login-cinematic {
+  position: relative;
+  background: #000;          /* fallback while video buffers */
+  overflow: hidden;
+  isolation: isolate;        /* keep video / tint / form in their own stack */
+}
+.login-bg-video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
+}
+/* Dark tint over the video — starts fully transparent, fades in once
+ * .is-revealed flips so the form below it stays legible. */
+.login-bg-tint {
+  position: absolute; inset: 0;
+  z-index: 1;
+  background: linear-gradient(135deg, rgba(7, 17, 24, 0.55) 0%, rgba(14, 34, 48, 0.65) 100%);
+  opacity: 0;
+  transition: opacity 1s var(--ease);
+  pointer-events: none;
+}
+.login-cinematic.is-revealed .login-bg-tint { opacity: 1; }
+
+/* Glass form: hidden + scaled down for the first 2s, then pops in. */
+.login-cinematic .login-card.glass {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  color: var(--ivory);
+  opacity: 0;
+  transform: translateY(24px) scale(0.96);
+  transition: opacity .9s var(--ease), transform .9s var(--ease);
+  animation: none;           /* override the popIn from .login-card */
+  pointer-events: none;
+}
+.login-cinematic.is-revealed .login-card.glass {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* Override interior text colors so they read on the glass surface */
+.login-cinematic .login-title { color: var(--ivory); }
+.login-cinematic .login-sub   { color: rgba(244, 249, 233, 0.72); }
+.login-cinematic .login-field label { color: rgba(244, 249, 233, 0.72); }
+.login-cinematic .login-field input {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--ivory);
+}
+.login-cinematic .login-field input::placeholder { color: rgba(244, 249, 233, 0.45); }
+.login-cinematic .login-field input:focus {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 4px rgba(200, 155, 79, 0.18);
+}
+.login-cinematic .pw-toggle { color: rgba(244, 249, 233, 0.6); }
+.login-cinematic .pw-toggle:hover { background: rgba(255, 255, 255, 0.1); color: var(--ivory); }
+.login-cinematic .login-btn {
+  background: var(--gold); color: #2a1c0a;
+  box-shadow: 0 10px 24px rgba(200, 155, 79, 0.35);
+}
+.login-cinematic .login-btn:hover { background: var(--gold-hover); }
+.login-cinematic .back-link { color: rgba(244, 249, 233, 0.7); }
+.login-cinematic .back-link:hover { color: var(--ivory); }
+.login-cinematic .error-msg { background: rgba(210, 74, 74, 0.18); color: #ffb4b4; }
+
+/* Honor reduced motion: skip the slow reveal and show form immediately. */
+@media (prefers-reduced-motion: reduce) {
+  .login-cinematic .login-card.glass {
+    opacity: 1;
+    transform: none;
+    transition: none;
+    pointer-events: auto;
+  }
+  .login-cinematic .login-bg-tint { opacity: 1; transition: none; }
+}
 .login-card {
   width: 100%; max-width: 420px;
   background: var(--surface);

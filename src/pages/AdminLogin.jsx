@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import RkLogo from '../components/RkLogo.jsx';
 
@@ -6,16 +6,35 @@ const CREDS = { username: 'trohankini', password: 'rk6202' };
 
 export default function AdminLogin() {
   const navigate = useNavigate();
+  const videoRef = useRef(null);
   const [u, setU] = useState('');
   const [p, setP] = useState('');
   const [err, setErr] = useState(false);
   const [showPw, setShowPw] = useState(false);
 
+  /* Two-stage reveal:
+   *   - 0s..2s  → fullscreen cinematic video, form hidden
+   *   - 2s+     → backdrop darkens, glass form pops up smoothly */
+  const [revealed, setRevealed] = useState(false);
+
   useEffect(() => {
     if (sessionStorage.getItem('rk_admin_auth') === 'true') {
       navigate('/admin/dashboard', { replace: true });
+      return;
     }
+    const t = setTimeout(() => setRevealed(true), 2000);
+    return () => clearTimeout(t);
   }, [navigate]);
+
+  /* Some mobile browsers block autoplay if the video isn't muted before
+   * play; nudge it explicitly once the element mounts. */
+  useEffect(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+  }, []);
 
   function submit(e) {
     e?.preventDefault?.();
@@ -28,8 +47,20 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="login-shell">
-      <form className="login-card" onSubmit={submit}>
+    <div className={`login-shell login-cinematic ${revealed ? 'is-revealed' : ''}`}>
+      <video
+        ref={videoRef}
+        className="login-bg-video"
+        src="/admin-bg.mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+      />
+      <div className="login-bg-tint" aria-hidden="true" />
+
+      <form className="login-card glass" onSubmit={submit}>
         <div className="login-top">
           <div className="login-avatar"><RkLogo size={56} /></div>
           <div className="login-title">Admin Access</div>
