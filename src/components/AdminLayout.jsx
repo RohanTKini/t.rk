@@ -1,16 +1,87 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate, Link } from 'react-router-dom';
 import RkLogo from './RkLogo.jsx';
+
+/* Selectors for every section we want to scroll-reveal across all admin pages.
+ * Keep this list broad — it's class-scoped, so the only thing being affected
+ * is the visual entrance of the matched node. */
+const REVEAL_SELECTORS = [
+  '.welcome-card',
+  '.weather-card',
+  '.stats-row > .stat-card',
+  '.section-head',
+  '.quick-grid > .quick-card',
+  '.control-card',
+  '.control-card > .control-row',
+  '.blocker-panel',
+  '.blocker-panel .blocked-item',
+  '.admin-form-card',
+  '.admin-list-card',
+  '.gallery-admin-grid > *',
+  '.logs-table-wrap',
+  '.logs-table tbody tr',
+  '.hint-banner',
+  '.admin-actions-bar'
+].join(', ');
 
 export default function AdminLayout({ title, subtitle, headerRight, children }) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const contentRef = useRef(null);
 
   useEffect(() => {
     const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, []);
+
+  /* Auto scroll-reveal every section in every admin page. Works for sections
+   * that mount later too (toggles, new gallery items, freshly added blocked
+   * dates) via MutationObserver. */
+  useEffect(() => {
+    const root = contentRef.current;
+    if (!root) return;
+
+    if (typeof IntersectionObserver === 'undefined') {
+      root.querySelectorAll(REVEAL_SELECTORS).forEach(n => n.classList.add('admin-reveal', 'is-visible'));
+      return;
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    const tagAndObserve = (scope) => {
+      scope.querySelectorAll(REVEAL_SELECTORS).forEach(node => {
+        if (node.classList.contains('admin-reveal')) return;
+        node.classList.add('admin-reveal');
+        const rect = node.getBoundingClientRect();
+        if (rect.top < window.innerHeight && rect.bottom > 0) {
+          node.classList.add('is-visible');
+        } else {
+          io.observe(node);
+        }
+      });
+    };
+
+    tagAndObserve(root);
+
+    const mo = new MutationObserver((mutations) => {
+      mutations.forEach(m => {
+        m.addedNodes.forEach(n => {
+          if (n.nodeType === 1) tagAndObserve(n);
+        });
+      });
+    });
+    mo.observe(root, { childList: true, subtree: true });
+
+    return () => { io.disconnect(); mo.disconnect(); };
+  }, [children]);
 
   function logout() {
     sessionStorage.removeItem('rk_admin_auth');
@@ -90,7 +161,7 @@ export default function AdminLayout({ title, subtitle, headerRight, children }) 
           </div>
           {headerRight}
         </header>
-        <main className="admin-content">
+        <main className="admin-content" ref={contentRef}>
           {children}
         </main>
       </div>

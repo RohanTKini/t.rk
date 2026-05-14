@@ -3390,119 +3390,74 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 /* Topbar floats down */
 .admin-topbar { animation: adminTopbarSlide .55s cubic-bezier(.2,.7,.2,1) both; }
 
-/* Every direct child of admin-content rises into place, cascaded */
-.admin-content > * {
-  animation: adminRise .6s cubic-bezier(.2,.7,.2,1) both;
+/* Scroll-triggered reveal — every admin section. AdminLayout tags matched
+ * nodes with .admin-reveal and toggles .is-visible via IntersectionObserver
+ * as each section scrolls into the viewport. Sections that mount already in
+ * view get .is-visible immediately, so above-the-fold content animates in
+ * cleanly on first paint and below-the-fold content waits for the scroll. */
+.admin-reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition:
+    opacity .65s cubic-bezier(.2,.7,.2,1),
+    transform .65s cubic-bezier(.2,.7,.2,1);
+  will-change: opacity, transform;
 }
-.admin-content > *:nth-child(1)  { animation-delay: .05s; }
-.admin-content > *:nth-child(2)  { animation-delay: .12s; }
-.admin-content > *:nth-child(3)  { animation-delay: .19s; }
-.admin-content > *:nth-child(4)  { animation-delay: .26s; }
-.admin-content > *:nth-child(5)  { animation-delay: .33s; }
-.admin-content > *:nth-child(6)  { animation-delay: .40s; }
-.admin-content > *:nth-child(7)  { animation-delay: .46s; }
-.admin-content > *:nth-child(8)  { animation-delay: .52s; }
-.admin-content > *:nth-child(9)  { animation-delay: .58s; }
-.admin-content > *:nth-child(10) { animation-delay: .64s; }
-.admin-content > *:nth-child(n+11) { animation-delay: .70s; }
-
-/* Inner stat / quick / list children cascade within their grids */
-.stats-row > .stat-card,
-.quick-grid > .quick-card,
-.admin-list-card,
-.gallery-admin-grid > * {
-  animation: adminRise .55s cubic-bezier(.2,.7,.2,1) both;
+.admin-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
 }
-.stats-row > .stat-card:nth-child(1) { animation-delay: .15s; }
-.stats-row > .stat-card:nth-child(2) { animation-delay: .22s; }
-.stats-row > .stat-card:nth-child(3) { animation-delay: .29s; }
-.stats-row > .stat-card:nth-child(4) { animation-delay: .36s; }
-.stats-row > .stat-card:nth-child(5) { animation-delay: .43s; }
 
-.quick-grid > .quick-card:nth-child(1) { animation-delay: .20s; }
-.quick-grid > .quick-card:nth-child(2) { animation-delay: .26s; }
-.quick-grid > .quick-card:nth-child(3) { animation-delay: .32s; }
-.quick-grid > .quick-card:nth-child(4) { animation-delay: .38s; }
-.quick-grid > .quick-card:nth-child(5) { animation-delay: .44s; }
-.quick-grid > .quick-card:nth-child(6) { animation-delay: .50s; }
+/* Stagger siblings inside common grids/lists so a row of stat cards or a
+ * grid of gallery tiles ripples in instead of all snapping at once. */
+.stats-row > .admin-reveal:nth-child(1) { transition-delay: .04s; }
+.stats-row > .admin-reveal:nth-child(2) { transition-delay: .10s; }
+.stats-row > .admin-reveal:nth-child(3) { transition-delay: .16s; }
+.stats-row > .admin-reveal:nth-child(4) { transition-delay: .22s; }
+.stats-row > .admin-reveal:nth-child(5) { transition-delay: .28s; }
 
-.admin-list-card:nth-child(1) { animation-delay: .14s; }
-.admin-list-card:nth-child(2) { animation-delay: .20s; }
-.admin-list-card:nth-child(3) { animation-delay: .26s; }
-.admin-list-card:nth-child(4) { animation-delay: .32s; }
-.admin-list-card:nth-child(5) { animation-delay: .38s; }
-.admin-list-card:nth-child(n+6) { animation-delay: .44s; }
+.quick-grid > .admin-reveal:nth-child(1) { transition-delay: .04s; }
+.quick-grid > .admin-reveal:nth-child(2) { transition-delay: .10s; }
+.quick-grid > .admin-reveal:nth-child(3) { transition-delay: .16s; }
+.quick-grid > .admin-reveal:nth-child(4) { transition-delay: .22s; }
+.quick-grid > .admin-reveal:nth-child(5) { transition-delay: .28s; }
+.quick-grid > .admin-reveal:nth-child(6) { transition-delay: .34s; }
 
-.gallery-admin-grid > *:nth-child(1) { animation-delay: .10s; }
-.gallery-admin-grid > *:nth-child(2) { animation-delay: .15s; }
-.gallery-admin-grid > *:nth-child(3) { animation-delay: .20s; }
-.gallery-admin-grid > *:nth-child(4) { animation-delay: .25s; }
-.gallery-admin-grid > *:nth-child(5) { animation-delay: .30s; }
-.gallery-admin-grid > *:nth-child(6) { animation-delay: .35s; }
-.gallery-admin-grid > *:nth-child(n+7) { animation-delay: .40s; }
+.gallery-admin-grid > .admin-reveal:nth-child(1) { transition-delay: .04s; }
+.gallery-admin-grid > .admin-reveal:nth-child(2) { transition-delay: .08s; }
+.gallery-admin-grid > .admin-reveal:nth-child(3) { transition-delay: .12s; }
+.gallery-admin-grid > .admin-reveal:nth-child(4) { transition-delay: .16s; }
+.gallery-admin-grid > .admin-reveal:nth-child(5) { transition-delay: .20s; }
+.gallery-admin-grid > .admin-reveal:nth-child(6) { transition-delay: .24s; }
+.gallery-admin-grid > .admin-reveal:nth-child(n+7) { transition-delay: .28s; }
 
-/* Form card sections — head fades, then each field cascades in */
-.admin-form-card .admin-form-head,
-.admin-form-card .field,
-.admin-form-card .field-row,
-.admin-form-card .admin-actions-bar,
-.admin-form-card .panel-title {
-  animation: adminRise .5s cubic-bezier(.2,.7,.2,1) both;
-}
-.admin-form-card .admin-form-head { animation-delay: .12s; }
-.admin-form-card > *:nth-child(2)  { animation-delay: .18s; }
-.admin-form-card > *:nth-child(3)  { animation-delay: .22s; }
-.admin-form-card > *:nth-child(4)  { animation-delay: .26s; }
-.admin-form-card > *:nth-child(5)  { animation-delay: .30s; }
-.admin-form-card > *:nth-child(6)  { animation-delay: .34s; }
-.admin-form-card > *:nth-child(7)  { animation-delay: .38s; }
-.admin-form-card > *:nth-child(8)  { animation-delay: .42s; }
-.admin-form-card > *:nth-child(n+9) { animation-delay: .46s; }
+.control-card .admin-reveal:nth-child(1) { transition-delay: .04s; }
+.control-card .admin-reveal:nth-child(2) { transition-delay: .12s; }
+.control-card .admin-reveal:nth-child(3) { transition-delay: .20s; }
+.control-card .admin-reveal:nth-child(n+4) { transition-delay: .28s; }
 
-/* Control rows inside any control-card cascade in */
-.control-card .control-row {
-  animation: adminRise .5s cubic-bezier(.2,.7,.2,1) both;
-}
-.control-card .control-row:nth-child(1) { animation-delay: .14s; }
-.control-card .control-row:nth-child(2) { animation-delay: .20s; }
-.control-card .control-row:nth-child(3) { animation-delay: .26s; }
-.control-card .control-row:nth-child(4) { animation-delay: .32s; }
-.control-card .control-row:nth-child(n+5) { animation-delay: .38s; }
+.blocker-panel .admin-reveal:nth-child(1) { transition-delay: .06s; }
+.blocker-panel .admin-reveal:nth-child(2) { transition-delay: .12s; }
+.blocker-panel .admin-reveal:nth-child(3) { transition-delay: .18s; }
+.blocker-panel .admin-reveal:nth-child(n+4) { transition-delay: .24s; }
 
-/* Inline blocker / blocked-list items */
-.blocker-panel { animation: adminFadeIn .45s ease-out .15s both; }
-.blocker-panel .blocked-item {
-  animation: adminRise .45s cubic-bezier(.2,.7,.2,1) both;
-}
-.blocker-panel .blocked-item:nth-child(1) { animation-delay: .20s; }
-.blocker-panel .blocked-item:nth-child(2) { animation-delay: .26s; }
-.blocker-panel .blocked-item:nth-child(3) { animation-delay: .32s; }
-.blocker-panel .blocked-item:nth-child(4) { animation-delay: .38s; }
-.blocker-panel .blocked-item:nth-child(n+5) { animation-delay: .44s; }
+.logs-table tbody .admin-reveal:nth-child(1)  { transition-delay: .03s; }
+.logs-table tbody .admin-reveal:nth-child(2)  { transition-delay: .07s; }
+.logs-table tbody .admin-reveal:nth-child(3)  { transition-delay: .11s; }
+.logs-table tbody .admin-reveal:nth-child(4)  { transition-delay: .15s; }
+.logs-table tbody .admin-reveal:nth-child(5)  { transition-delay: .19s; }
+.logs-table tbody .admin-reveal:nth-child(6)  { transition-delay: .23s; }
+.logs-table tbody .admin-reveal:nth-child(n+7) { transition-delay: .27s; }
 
-/* Logs table rows cascade in once on first paint */
+/* Subtle hover polish on log rows (independent of the reveal animation) */
 .logs-table tbody tr {
-  animation: adminRise .45s cubic-bezier(.2,.7,.2,1) both;
-}
-.logs-table tbody tr:nth-child(1)  { animation-delay: .12s; }
-.logs-table tbody tr:nth-child(2)  { animation-delay: .16s; }
-.logs-table tbody tr:nth-child(3)  { animation-delay: .20s; }
-.logs-table tbody tr:nth-child(4)  { animation-delay: .24s; }
-.logs-table tbody tr:nth-child(5)  { animation-delay: .28s; }
-.logs-table tbody tr:nth-child(6)  { animation-delay: .32s; }
-.logs-table tbody tr:nth-child(7)  { animation-delay: .36s; }
-.logs-table tbody tr:nth-child(8)  { animation-delay: .40s; }
-.logs-table tbody tr:nth-child(n+9) { animation-delay: .44s; }
-.logs-table tbody tr {
-  transition: background-color .2s ease, transform .25s cubic-bezier(.2,.7,.2,1);
+  transition:
+    background-color .2s ease,
+    opacity .65s cubic-bezier(.2,.7,.2,1),
+    transform .65s cubic-bezier(.2,.7,.2,1);
 }
 .logs-table tbody tr:hover {
   background: rgba(200, 155, 79, 0.06);
-}
-
-/* Hint banner & action bars float in */
-.hint-banner, .admin-actions-bar {
-  animation: adminRise .5s cubic-bezier(.2,.7,.2,1) both;
 }
 
 /* Polish form input focus across every admin form */
