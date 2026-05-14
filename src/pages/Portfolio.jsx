@@ -555,7 +555,7 @@ export default function Portfolio() {
               <div className="edu-degree">B.TECH</div>
             </div>
             <div className="edu-main">
-              <span className="edu-tag">Bachelor of Engineering</span>
+              <span className="edu-tag">Bachelor of Technology</span>
               <h3>NMAM Institute of Technology</h3>
               <div className="edu-branch">Computer Science &amp; Engineering</div>
               <div className="edu-meta">

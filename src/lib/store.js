@@ -54,7 +54,7 @@ const DEFAULT_CONTENT = {
     { title: 'Leadership', desc: 'Taking responsibility, guiding teams, making bold decisions and building environments where ideas flourish.' },
     { title: 'Collaboration', desc: 'Forging meaningful partnerships with innovators, organizations and visionaries who share the same passion.' }
   ],
-  address: 'Ashoknagar, Ashoknagar Road, Urwa, Mangalore — 575006',
+  address: 'Mangaluru, Karnataka, India',
   email1: 'rohan.t.kini@gmail.com',
   email2: 'Rohankini.rk18@gmail.com',
   phone: '+91 63615 29586'

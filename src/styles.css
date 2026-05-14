@@ -3310,6 +3310,413 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   .pd-more-img { width: 100%; aspect-ratio: 16/9; height: auto; }
 }
 
+/* =========================================================================
+   ADMIN — MODERN PAGE ANIMATIONS
+   Smooth, cascading entrance for every top-level child of .admin-content,
+   plus polished hover micro-interactions for cards. Pure CSS — no JSX
+   changes needed. The .page-enter wrapper stays opacity-only (the
+   containing-block guard documented above) so descendant `position:fixed`
+   elements like the sidebar drawer keep working.
+   ========================================================================= */
+
+@keyframes adminRise {
+  from { opacity: 0; transform: translate3d(0, 18px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes adminFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes adminSidebarSlide {
+  from { opacity: 0; transform: translate3d(-14px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes adminNavStagger {
+  from { opacity: 0; transform: translate3d(-10px, 0, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes adminTopbarSlide {
+  from { opacity: 0; transform: translate3d(0, -10px, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes adminShimmer {
+  0%   { transform: translateX(-110%) skewX(-18deg); }
+  100% { transform: translateX(220%)  skewX(-18deg); }
+}
+@keyframes adminPulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.6); opacity: 0; }
+}
+@keyframes adminGoldBreath {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(200, 155, 79, 0.0); }
+  50%      { box-shadow: 0 0 0 6px rgba(200, 155, 79, 0.10); }
+}
+
+/* Sidebar slides in once on mount; nav items cascade */
+.admin-sidebar { animation: adminSidebarSlide .55s cubic-bezier(.2,.7,.2,1) both; }
+.admin-brand   { animation: adminFadeIn .6s ease-out .05s both; }
+.admin-nav .admin-nav-item { animation: adminNavStagger .5s cubic-bezier(.2,.7,.2,1) both; }
+.admin-nav .admin-nav-item:nth-child(1) { animation-delay: .10s; }
+.admin-nav .admin-nav-item:nth-child(2) { animation-delay: .15s; }
+.admin-nav .admin-nav-item:nth-child(3) { animation-delay: .20s; }
+.admin-nav .admin-nav-item:nth-child(4) { animation-delay: .25s; }
+.admin-nav .admin-nav-item:nth-child(5) { animation-delay: .30s; }
+.admin-nav .admin-nav-item:nth-child(6) { animation-delay: .35s; }
+.admin-nav .admin-nav-item:nth-child(7) { animation-delay: .40s; }
+.admin-nav .admin-nav-item:nth-child(8) { animation-delay: .45s; }
+.admin-footer { animation: adminFadeIn .6s ease-out .55s both; }
+
+/* Topbar floats down */
+.admin-topbar { animation: adminTopbarSlide .55s cubic-bezier(.2,.7,.2,1) both; }
+
+/* Every direct child of admin-content rises into place, cascaded */
+.admin-content > * {
+  animation: adminRise .6s cubic-bezier(.2,.7,.2,1) both;
+}
+.admin-content > *:nth-child(1)  { animation-delay: .05s; }
+.admin-content > *:nth-child(2)  { animation-delay: .12s; }
+.admin-content > *:nth-child(3)  { animation-delay: .19s; }
+.admin-content > *:nth-child(4)  { animation-delay: .26s; }
+.admin-content > *:nth-child(5)  { animation-delay: .33s; }
+.admin-content > *:nth-child(6)  { animation-delay: .40s; }
+.admin-content > *:nth-child(7)  { animation-delay: .46s; }
+.admin-content > *:nth-child(8)  { animation-delay: .52s; }
+.admin-content > *:nth-child(9)  { animation-delay: .58s; }
+.admin-content > *:nth-child(10) { animation-delay: .64s; }
+.admin-content > *:nth-child(n+11) { animation-delay: .70s; }
+
+/* Inner stat / quick / list children cascade within their grids */
+.stats-row > .stat-card,
+.quick-grid > .quick-card,
+.admin-list-card,
+.gallery-admin-grid > * {
+  animation: adminRise .55s cubic-bezier(.2,.7,.2,1) both;
+}
+.stats-row > .stat-card:nth-child(1) { animation-delay: .15s; }
+.stats-row > .stat-card:nth-child(2) { animation-delay: .22s; }
+.stats-row > .stat-card:nth-child(3) { animation-delay: .29s; }
+.stats-row > .stat-card:nth-child(4) { animation-delay: .36s; }
+.stats-row > .stat-card:nth-child(5) { animation-delay: .43s; }
+
+.quick-grid > .quick-card:nth-child(1) { animation-delay: .20s; }
+.quick-grid > .quick-card:nth-child(2) { animation-delay: .26s; }
+.quick-grid > .quick-card:nth-child(3) { animation-delay: .32s; }
+.quick-grid > .quick-card:nth-child(4) { animation-delay: .38s; }
+.quick-grid > .quick-card:nth-child(5) { animation-delay: .44s; }
+.quick-grid > .quick-card:nth-child(6) { animation-delay: .50s; }
+
+.admin-list-card:nth-child(1) { animation-delay: .14s; }
+.admin-list-card:nth-child(2) { animation-delay: .20s; }
+.admin-list-card:nth-child(3) { animation-delay: .26s; }
+.admin-list-card:nth-child(4) { animation-delay: .32s; }
+.admin-list-card:nth-child(5) { animation-delay: .38s; }
+.admin-list-card:nth-child(n+6) { animation-delay: .44s; }
+
+.gallery-admin-grid > *:nth-child(1) { animation-delay: .10s; }
+.gallery-admin-grid > *:nth-child(2) { animation-delay: .15s; }
+.gallery-admin-grid > *:nth-child(3) { animation-delay: .20s; }
+.gallery-admin-grid > *:nth-child(4) { animation-delay: .25s; }
+.gallery-admin-grid > *:nth-child(5) { animation-delay: .30s; }
+.gallery-admin-grid > *:nth-child(6) { animation-delay: .35s; }
+.gallery-admin-grid > *:nth-child(n+7) { animation-delay: .40s; }
+
+/* Welcome card stays as-is structurally; cascade animation alone gives entrance polish. */
+
+/* Stat / quick cards — refined hover with glow + arrow nudge */
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform .4s cubic-bezier(.2,.7,.2,1),
+    border-color .4s ease,
+    box-shadow .4s ease;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgba(200, 155, 79, 0.10), transparent 60%);
+  opacity: 0;
+  transition: opacity .4s ease;
+  pointer-events: none;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 14px 32px -18px rgba(200, 155, 79, 0.45), 0 4px 12px rgba(0,0,0,0.06);
+}
+.stat-card:hover::before { opacity: 1; }
+
+.quick-card {
+  position: relative;
+  overflow: hidden;
+  transition:
+    transform .4s cubic-bezier(.2,.7,.2,1),
+    border-color .4s ease,
+    box-shadow .4s ease;
+}
+.quick-card::after {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--gold), var(--gold-hover, var(--gold)));
+  transform: scaleY(0);
+  transform-origin: top;
+  transition: transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.quick-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--gold);
+  box-shadow: 0 14px 32px -18px rgba(200, 155, 79, 0.45), 0 4px 12px rgba(0,0,0,0.06);
+}
+.quick-card:hover::after { transform: scaleY(1); }
+.quick-card:hover .quick-icon { background: rgba(200, 155, 79, 0.14); color: var(--gold); transition: background-color .35s ease, color .35s ease; }
+.quick-card:hover .quick-arrow { transform: translateX(6px); }
+
+/* Toggles, form inputs, list cards — subtle focus / hover polish */
+.toggle { transition: background-color .35s ease, box-shadow .35s ease; }
+.toggle:hover { box-shadow: 0 0 0 6px rgba(200, 155, 79, 0.08); }
+
+.admin-form-card .field input,
+.admin-form-card .field textarea,
+.admin-form-card .field select {
+  transition: border-color .25s ease, box-shadow .25s ease, background-color .25s ease;
+}
+
+.admin-list-card {
+  transition: transform .35s cubic-bezier(.2,.7,.2,1), border-color .35s ease, box-shadow .35s ease;
+}
+.admin-list-card:hover { transform: translateY(-2px); }
+
+.section-head .admin-section-title { position: relative; padding-left: 14px; }
+.section-head .admin-section-title::before {
+  content: '';
+  position: absolute; left: 0; top: 50%;
+  width: 4px; height: 16px;
+  background: linear-gradient(180deg, var(--gold), var(--gold-hover, var(--gold)));
+  border-radius: 2px;
+  transform: translateY(-50%) scaleY(0);
+  transform-origin: center;
+  animation: adminRise .5s cubic-bezier(.2,.7,.2,1) .25s both, sectionBarGrow .5s cubic-bezier(.2,.7,.2,1) .35s both;
+}
+@keyframes sectionBarGrow {
+  from { transform: translateY(-50%) scaleY(0); }
+  to   { transform: translateY(-50%) scaleY(1); }
+}
+
+/* =========================================================================
+   WEATHER CARD
+   Live geolocation-based weather widget, mounted on the admin dashboard.
+   Updates automatically when the device moves and every 10 minutes.
+   ========================================================================= */
+.weather-card {
+  position: relative;
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  background:
+    linear-gradient(135deg, rgba(11, 25, 36, 0.96) 0%, rgba(19, 41, 60, 0.96) 100%);
+  color: var(--ivory);
+  border: 1px solid rgba(200, 155, 79, 0.22);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+/* Tiny gold corner accent — purely decorative, can't bloat layout. */
+.weather-card::before {
+  content: '';
+  position: absolute;
+  top: -60px; right: -60px;
+  width: 180px; height: 180px;
+  background: radial-gradient(closest-side, rgba(200, 155, 79, 0.22), transparent 70%);
+  pointer-events: none;
+}
+
+.weather-head {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.weather-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.78);
+}
+.weather-pulse {
+  position: relative;
+  width: 8px; height: 8px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(200, 155, 79, 0.6);
+}
+.weather-pulse::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: adminPulse 1.8s ease-out infinite;
+}
+.weather-refresh {
+  width: 34px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--ivory);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: background-color .25s ease, color .25s ease, transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.weather-refresh:hover {
+  background: rgba(200, 155, 79, 0.18);
+  color: var(--gold);
+  transform: rotate(180deg);
+}
+
+.weather-body {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 18px;
+}
+.weather-icon {
+  font-size: 42px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.35));
+  animation: weatherIconFloat 4.5s ease-in-out infinite alternate;
+}
+@keyframes weatherIconFloat {
+  from { transform: translateY(0)   rotate(-2deg); }
+  to   { transform: translateY(-4px) rotate(2deg);  }
+}
+.weather-main {
+  display: flex; flex-direction: column; gap: 2px;
+  min-width: 0;
+}
+.weather-temp {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 34px;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  display: inline-flex; align-items: flex-start; gap: 2px;
+}
+.weather-unit {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+  margin-top: 4px;
+}
+.weather-cond {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.88);
+  letter-spacing: -0.005em;
+}
+.weather-place {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.62);
+  margin-top: 4px;
+  max-width: 100%;
+}
+.weather-place span {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 320px;
+}
+.weather-stats {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 6px 22px;
+  padding-left: 18px;
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+.weather-stat {
+  display: flex; flex-direction: column; gap: 2px;
+  font-size: 12px;
+}
+.weather-stat-key {
+  font-family: var(--font-mono);
+  font-size: 9.5px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+.weather-stat-val {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ivory);
+  letter-spacing: -0.015em;
+}
+
+/* Skeleton loading state */
+.weather-loading {
+  display: flex; align-items: center; gap: 18px;
+  padding: 4px 0;
+}
+.weather-skeleton-icon {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(110deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 220% 100%;
+  animation: weatherSkel 1.4s linear infinite;
+}
+.weather-skeleton-line {
+  height: 12px;
+  border-radius: 6px;
+  background: linear-gradient(110deg, rgba(255,255,255,0.06) 25%, rgba(255,255,255,0.14) 50%, rgba(255,255,255,0.06) 75%);
+  background-size: 220% 100%;
+  animation: weatherSkel 1.4s linear infinite;
+}
+@keyframes weatherSkel {
+  from { background-position: 220% 0; }
+  to   { background-position: -220% 0; }
+}
+
+.weather-empty {
+  display: flex; align-items: center; gap: 16px;
+  padding: 4px 0;
+}
+.weather-empty-icon {
+  font-size: 30px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+.weather-empty-text { flex: 1; min-width: 0; }
+.weather-empty-text strong {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14.5px;
+  color: var(--ivory);
+  margin-bottom: 2px;
+}
+.weather-empty-text p {
+  margin: 0;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.5;
+}
+
+@media (max-width: 720px) {
+  .weather-card { padding: 18px 18px; }
+  .weather-body {
+    grid-template-columns: auto 1fr;
+    gap: 16px;
+  }
+  .weather-stats {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding-left: 0;
+    border-left: 0;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+  .weather-temp { font-size: 38px; }
+  .weather-icon { font-size: 46px; }
+  .weather-empty { flex-wrap: wrap; }
+  .weather-empty .btn { width: 100%; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

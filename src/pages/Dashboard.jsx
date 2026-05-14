@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import AdminLayout from '../components/AdminLayout.jsx';
 import Toast from '../components/Toast.jsx';
+import WeatherCard from '../components/WeatherCard.jsx';
 import { Store } from '../lib/store.js';
 import { formatDateShort, todayISO } from '../lib/helpers.js';
 import { useRevealAll } from '../lib/useReveal.js';
@@ -149,6 +150,8 @@ export default function Dashboard() {
           <p>Manage every part of your portfolio — content, experience, products, gallery, social links and bookings — from one place.</p>
         </div>
       </div>
+
+      <WeatherCard />
 
       <div className="stats-row">
         <div className="stat-card reveal delay-1">
