@@ -175,6 +175,48 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 .muted { color: var(--ink-3); }
 ::selection { background: var(--deep-space); color: var(--ivory); }
 
+/* ── Brand-styled scrollbars (global) ──────────────────────────────────
+ * Firefox uses `scrollbar-width` + `scrollbar-color`. WebKit / Blink use
+ * the ::-webkit-scrollbar pseudo-elements. Both target the same look:
+ * a thin gold-ish thumb on the page background. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--ash-grey), var(--line-strong));
+  border: 2px solid var(--bg);
+  border-radius: 999px;
+  background-clip: padding-box;
+  transition: background-color .25s;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--gold), var(--gold-hover));
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-corner { background: transparent; }
+
+/* Dark surfaces (admin sidebar, footer, deep-space sections) get an
+ * inverted thumb so it stays visible. */
+.admin-sidebar,
+.footer,
+.cta-strip {
+  scrollbar-color: var(--dark-line) transparent;
+}
+.admin-sidebar::-webkit-scrollbar-thumb,
+.footer::-webkit-scrollbar-thumb,
+.cta-strip::-webkit-scrollbar-thumb {
+  background: var(--dark-line);
+  border-color: var(--dark);
+}
+.admin-sidebar::-webkit-scrollbar-thumb:hover,
+.footer::-webkit-scrollbar-thumb:hover,
+.cta-strip::-webkit-scrollbar-thumb:hover {
+  background: var(--gold);
+}
+
 /* Opacity-only fade so the wrapper does NOT keep a transform applied
  * after the animation completes. Any non-`none` transform on .page-enter
  * makes it the containing block for descendant `position: fixed` elements,
@@ -2535,7 +2577,24 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 .badge { padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; letter-spacing: 0.04em; }
 .badge-indigo { background: rgba(40, 75, 99, 0.1); color: var(--yale-blue); }
 
-.logs-table-wrap { overflow-x: auto; }
+/* Hint banner above the bookings table */
+.logs-hint {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 24px;
+  background: rgba(40, 75, 99, 0.06);
+  border-bottom: 1px solid var(--line);
+  font-size: 12.5px; color: var(--ink-2); line-height: 1.5;
+}
+.logs-hint svg { color: var(--gold-hover); margin-top: 2px; flex-shrink: 0; }
+.logs-hint strong { color: var(--ink); font-weight: 700; }
+
+/* Internal scrollable wrapper — caps the table at ~60vh and gives it
+ * its own brand-styled scrollbar instead of growing the page. */
+.logs-table-wrap {
+  overflow: auto;
+  max-height: clamp(380px, 60vh, 720px);
+  -webkit-overflow-scrolling: touch;
+}
 .logs-table-wrap table { width: 100%; border-collapse: collapse; }
 .logs-table-wrap th {
   text-align: left;
@@ -2545,6 +2604,7 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   color: var(--ink-3);
   background: var(--surface-2);
   border-bottom: 1px solid var(--line);
+  position: sticky; top: 0; z-index: 1;     /* keep header in view while scrolling */
 }
 .logs-table-wrap td {
   padding: 14px;
@@ -2552,6 +2612,17 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   font-size: 13px;
 }
 .logs-table-wrap tr:last-child td { border-bottom: 0; }
+
+/* Row press / hover feedback — communicates that the row is interactive */
+.log-row {
+  cursor: pointer;
+  transition: background-color .2s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.log-row:hover { background: var(--surface-2); }
+.log-row:active { background: rgba(200, 155, 79, 0.1); }
+
 .row-delete {
   width: 30px; height: 30px;
   border-radius: 8px;
@@ -2561,6 +2632,102 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 }
 .row-delete:hover { background: rgba(210, 74, 74, 0.12); color: var(--danger); }
 .empty-state { text-align: center; padding: 60px 24px; color: var(--ink-3); font-size: 14px; }
+
+/* ── Booking detail modal ─────────────────────────────────────────────
+ * Portalled to <body>; covers the viewport with a backdrop, centres a
+ * card with every captured field. */
+.log-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  width: 100vw; height: 100dvh;
+  z-index: 200;
+  background: rgba(7, 17, 24, 0.82);
+  backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+  animation: fadeIn .25s var(--ease) both;
+}
+.log-modal-card {
+  position: relative;
+  width: 100%; max-width: 540px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 28px 28px 22px;
+  margin: auto;
+  animation: popIn .35s var(--ease) both;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+}
+.log-modal-x {
+  position: absolute; top: 14px; right: 14px;
+  width: 34px; height: 34px;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink-3);
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background-color .2s, color .2s;
+}
+.log-modal-x:hover { background: rgba(210, 74, 74, 0.12); color: var(--danger); }
+
+.log-modal-head {
+  margin-bottom: 18px; padding-bottom: 14px;
+  border-bottom: 1px dashed var(--line);
+}
+.log-modal-eyebrow {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold-hover);
+  margin-bottom: 6px;
+}
+.log-modal-head h3 {
+  margin: 0; font-family: var(--font-display);
+  font-size: 22px; font-weight: 800; letter-spacing: -0.025em;
+  color: var(--ink);
+}
+.log-modal-head p { margin: 4px 0 0; font-size: 13.5px; color: var(--ink-3); }
+
+.log-modal-grid {
+  margin: 0;
+  display: flex; flex-direction: column; gap: 0;
+}
+.log-modal-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+}
+.log-modal-row:last-child { border-bottom: 0; }
+.log-modal-row dt {
+  font-family: var(--font-mono);
+  font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3);
+  align-self: start;
+  padding-top: 2px;
+}
+.log-modal-row dd {
+  margin: 0;
+  font-size: 13.5px; color: var(--ink); line-height: 1.55;
+  word-break: break-word;
+}
+
+.log-modal-actions {
+  margin-top: 18px; padding-top: 16px;
+  border-top: 1px dashed var(--line);
+  display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
+}
+
+@media (max-width: 540px) {
+  .log-modal-card { padding: 22px 20px 18px; }
+  .log-modal-row { grid-template-columns: 1fr; gap: 4px; padding: 12px 0; }
+  .log-modal-row dt { padding-top: 0; }
+  .log-modal-actions { justify-content: stretch; }
+  .log-modal-actions .topbar-btn { flex: 1; justify-content: center; }
+}
 
 /* small inline chip in logs table */
 .chip {
