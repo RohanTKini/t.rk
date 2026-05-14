@@ -12,7 +12,7 @@ import RkLogo from '../components/RkLogo.jsx';
 import SmartImage from '../components/SmartImage.jsx';
 import Toast from '../components/Toast.jsx';
 
-const DEFAULT_ADDRESS = 'Mangaluru, Karnataka, India';
+const DEFAULT_ADDRESS = 'Ashoknagar, Ashoknagar Road, Urwa, Mangalore — 575006';
 const MODES = ['In-person', 'Conference / Online Meeting', 'Visit', 'Event / Activity'];
 
 export default function Schedule() {

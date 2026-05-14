@@ -552,7 +552,7 @@ export default function Portfolio() {
           <div className="edu-card reveal">
             <div className="edu-side">
               <div className="edu-period">2022 → 2026</div>
-              <div className="edu-degree">B.E.</div>
+              <div className="edu-degree">B.TECH</div>
             </div>
             <div className="edu-main">
               <span className="edu-tag">Bachelor of Engineering</span>
