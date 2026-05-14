@@ -3441,6 +3441,116 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 .gallery-admin-grid > *:nth-child(6) { animation-delay: .35s; }
 .gallery-admin-grid > *:nth-child(n+7) { animation-delay: .40s; }
 
+/* Form card sections — head fades, then each field cascades in */
+.admin-form-card .admin-form-head,
+.admin-form-card .field,
+.admin-form-card .field-row,
+.admin-form-card .admin-actions-bar,
+.admin-form-card .panel-title {
+  animation: adminRise .5s cubic-bezier(.2,.7,.2,1) both;
+}
+.admin-form-card .admin-form-head { animation-delay: .12s; }
+.admin-form-card > *:nth-child(2)  { animation-delay: .18s; }
+.admin-form-card > *:nth-child(3)  { animation-delay: .22s; }
+.admin-form-card > *:nth-child(4)  { animation-delay: .26s; }
+.admin-form-card > *:nth-child(5)  { animation-delay: .30s; }
+.admin-form-card > *:nth-child(6)  { animation-delay: .34s; }
+.admin-form-card > *:nth-child(7)  { animation-delay: .38s; }
+.admin-form-card > *:nth-child(8)  { animation-delay: .42s; }
+.admin-form-card > *:nth-child(n+9) { animation-delay: .46s; }
+
+/* Control rows inside any control-card cascade in */
+.control-card .control-row {
+  animation: adminRise .5s cubic-bezier(.2,.7,.2,1) both;
+}
+.control-card .control-row:nth-child(1) { animation-delay: .14s; }
+.control-card .control-row:nth-child(2) { animation-delay: .20s; }
+.control-card .control-row:nth-child(3) { animation-delay: .26s; }
+.control-card .control-row:nth-child(4) { animation-delay: .32s; }
+.control-card .control-row:nth-child(n+5) { animation-delay: .38s; }
+
+/* Inline blocker / blocked-list items */
+.blocker-panel { animation: adminFadeIn .45s ease-out .15s both; }
+.blocker-panel .blocked-item {
+  animation: adminRise .45s cubic-bezier(.2,.7,.2,1) both;
+}
+.blocker-panel .blocked-item:nth-child(1) { animation-delay: .20s; }
+.blocker-panel .blocked-item:nth-child(2) { animation-delay: .26s; }
+.blocker-panel .blocked-item:nth-child(3) { animation-delay: .32s; }
+.blocker-panel .blocked-item:nth-child(4) { animation-delay: .38s; }
+.blocker-panel .blocked-item:nth-child(n+5) { animation-delay: .44s; }
+
+/* Logs table rows cascade in once on first paint */
+.logs-table tbody tr {
+  animation: adminRise .45s cubic-bezier(.2,.7,.2,1) both;
+}
+.logs-table tbody tr:nth-child(1)  { animation-delay: .12s; }
+.logs-table tbody tr:nth-child(2)  { animation-delay: .16s; }
+.logs-table tbody tr:nth-child(3)  { animation-delay: .20s; }
+.logs-table tbody tr:nth-child(4)  { animation-delay: .24s; }
+.logs-table tbody tr:nth-child(5)  { animation-delay: .28s; }
+.logs-table tbody tr:nth-child(6)  { animation-delay: .32s; }
+.logs-table tbody tr:nth-child(7)  { animation-delay: .36s; }
+.logs-table tbody tr:nth-child(8)  { animation-delay: .40s; }
+.logs-table tbody tr:nth-child(n+9) { animation-delay: .44s; }
+.logs-table tbody tr {
+  transition: background-color .2s ease, transform .25s cubic-bezier(.2,.7,.2,1);
+}
+.logs-table tbody tr:hover {
+  background: rgba(200, 155, 79, 0.06);
+}
+
+/* Hint banner & action bars float in */
+.hint-banner, .admin-actions-bar {
+  animation: adminRise .5s cubic-bezier(.2,.7,.2,1) both;
+}
+
+/* Polish form input focus across every admin form */
+.admin-form-card .field input:focus,
+.admin-form-card .field textarea:focus,
+.admin-form-card .field select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(200, 155, 79, 0.18);
+  border-color: var(--gold) !important;
+}
+
+/* Smooth button micro-interactions admin-wide */
+.admin-content .btn,
+.admin-content .btn-primary,
+.admin-content .topbar-btn,
+.admin-content .mini-btn {
+  transition: transform .25s cubic-bezier(.2,.7,.2,1),
+              background-color .25s ease,
+              box-shadow .25s ease,
+              color .25s ease;
+}
+.admin-content .btn:hover,
+.admin-content .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px -10px rgba(0,0,0,0.25);
+}
+.admin-content .btn:active,
+.admin-content .btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Sidebar nav active item gets a gentle gold pulse on first paint */
+.admin-nav-item.active {
+  animation: adminGoldBreath 2.4s ease-in-out 1.2s 2;
+}
+
+/* Modal entrance polish (Logs booking detail uses .log-modal) */
+.log-modal {
+  animation: adminFadeIn .25s ease-out both;
+}
+.log-modal-card {
+  animation: logModalRise .45s cubic-bezier(.2,.7,.2,1) both;
+}
+@keyframes logModalRise {
+  from { opacity: 0; transform: translate3d(0, 16px, 0) scale(.98); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0)   scale(1);   }
+}
+
 /* Welcome card stays as-is structurally; cascade animation alone gives entrance polish. */
 
 /* Stat / quick cards — refined hover with glow + arrow nudge */
