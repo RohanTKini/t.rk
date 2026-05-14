@@ -2423,6 +2423,11 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 .topbar-btn:hover { background: var(--surface-2); border-color: var(--deep-space); color: var(--ink); }
 .topbar-btn.danger { color: var(--danger); border-color: rgba(210, 74, 74, 0.35); }
 .topbar-btn.danger:hover { background: rgba(210, 74, 74, 0.08); }
+.topbar-btn.primary {
+  background: var(--deep-space); color: var(--ivory);
+  border-color: var(--deep-space);
+}
+.topbar-btn.primary:hover { background: #0a1c28; color: var(--ivory); border-color: #0a1c28; }
 .topbar-actions { display: flex; gap: 8px; }
 
 .admin-form-card {
@@ -2721,12 +2726,63 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
 }
 
+/* ── Edit-mode form inside the booking modal ────────────────────────── */
+.log-modal-edit {
+  display: flex; flex-direction: column; gap: 12px;
+  animation: glassIn .35s var(--ease) both;
+}
+.log-edit-row { display: flex; flex-direction: column; gap: 6px; }
+.log-edit-row label {
+  font-family: var(--font-mono);
+  font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-3);
+}
+.log-edit-row input,
+.log-edit-row textarea,
+.log-edit-row select {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .2s, background-color .2s, box-shadow .2s;
+}
+.log-edit-row input:focus,
+.log-edit-row textarea:focus,
+.log-edit-row select:focus {
+  border-color: var(--deep-space);
+  background: var(--surface);
+  box-shadow: 0 0 0 4px rgba(21, 50, 67, 0.1);
+}
+.log-edit-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.log-edit-hint {
+  margin-top: 2px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--bg-2);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-2);
+}
+.log-edit-hint strong { color: var(--gold-hover); font-weight: 700; }
+
 @media (max-width: 540px) {
   .log-modal-card { padding: 22px 20px 18px; }
   .log-modal-row { grid-template-columns: 1fr; gap: 4px; padding: 12px 0; }
   .log-modal-row dt { padding-top: 0; }
   .log-modal-actions { justify-content: stretch; }
   .log-modal-actions .topbar-btn { flex: 1; justify-content: center; }
+  .log-edit-grid2 { grid-template-columns: 1fr 1fr; gap: 10px; }
 }
 
 /* small inline chip in logs table */

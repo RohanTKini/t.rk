@@ -278,6 +278,12 @@ export const Store = {
     writeCache(next); pushRemote(next).catch(() => {});
     return next;
   },
+  async updateLog(id, partial) {
+    const next = readCache();
+    next.logs = (next.logs || []).map(l => l.id === id ? { ...l, ...partial } : l);
+    writeCache(next); pushRemote(next).catch(() => {});
+    return next;
+  },
   async clearLogs() {
     const next = readCache();
     next.logs = [];

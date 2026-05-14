@@ -3,34 +3,32 @@ import { createPortal } from 'react-dom';
 import AdminLayout from '../components/AdminLayout.jsx';
 import Toast from '../components/Toast.jsx';
 import { Store } from '../lib/store.js';
-import { formatDate, formatDateShort, formatTime12 } from '../lib/helpers.js';
+import {
+  formatDate, formatDateShort, formatTime12,
+  computeDuration
+} from '../lib/helpers.js';
 import { useRevealAll } from '../lib/useReveal.js';
 
-/* Long-press hook — fires onLongPress after `ms` of held touch/mouse,
- * suppresses the click, otherwise lets a quick tap call onTap. */
-function useLongPress(onLongPress, onTap, ms = 450) {
+/* Long-press hook — only fires onLongPress after `ms` of held touch/mouse.
+ * A quick tap/click is intentionally ignored (no onTap callback). */
+function useLongPress(onLongPress, ms = 450) {
   const timer = useRef(null);
-  const fired = useRef(false);
 
   const start = (e) => {
-    fired.current = false;
-    timer.current = setTimeout(() => {
-      fired.current = true;
-      onLongPress?.(e);
-    }, ms);
+    /* Don't start a long-press timer when the press began on an
+     * interactive child (delete button, edit button, etc.) */
+    if (e.target.closest && e.target.closest('button, a, input, select, textarea')) return;
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => onLongPress?.(e), ms);
   };
   const cancel = () => clearTimeout(timer.current);
-  const release = (e) => {
-    clearTimeout(timer.current);
-    if (!fired.current) onTap?.(e);
-  };
 
   return {
     onMouseDown: start,
-    onMouseUp: release,
+    onMouseUp: cancel,
     onMouseLeave: cancel,
     onTouchStart: start,
-    onTouchEnd: release,
+    onTouchEnd: cancel,
     onTouchCancel: cancel,
   };
 }
@@ -44,9 +42,31 @@ function timeAgo(iso) {
   return `${Math.floor(sec / 86400)} day${Math.floor(sec / 86400) === 1 ? '' : 's'} ago`;
 }
 
-/* Detail modal — shows every captured field for one booking. Portalled
- * to <body> so it escapes any transformed ancestor. */
-function LogDetail({ log, onClose, onDelete }) {
+const MODES = ['In-person', 'Conference / Online Meeting', 'Visit', 'Event / Activity'];
+
+/* Detail modal — view + edit modes for one booking. Portalled to <body>. */
+function LogDetail({ log, onClose, onDelete, onSave, onToast }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(null);
+
+  /* Reset draft + view-mode when a new log is opened or the modal closes. */
+  useEffect(() => {
+    if (log) {
+      setDraft({
+        name: log.name || '',
+        phone: log.phone || '',
+        email: log.email || '',
+        topic: log.topic || '',
+        desc: log.desc || '',
+        mode: log.mode || '',
+        date: log.date || '',
+        time: log.time || '',
+        endTime: log.endTime || ''
+      });
+      setEditing(false);
+    }
+  }, [log?.id]);
+
   useEffect(() => {
     if (!log) return;
     const onKey = (e) => { if (e.key === 'Escape') onClose(); };
@@ -58,9 +78,46 @@ function LogDetail({ log, onClose, onDelete }) {
     };
   }, [log, onClose]);
 
-  if (!log) return null;
+  if (!log || !draft) return null;
 
-  const fields = [
+  function setField(key, value) {
+    setDraft(d => ({ ...d, [key]: value }));
+  }
+
+  function save() {
+    if (!draft.name.trim()) { onToast('Name is required'); return; }
+    if (!draft.phone.trim()) { onToast('Phone is required'); return; }
+    /* If both times set, recompute duration; otherwise keep the original. */
+    const duration = (draft.time && draft.endTime)
+      ? computeDuration(draft.time, draft.endTime) || log.duration
+      : log.duration;
+    onSave(log.id, {
+      name: draft.name.trim(),
+      phone: draft.phone.trim(),
+      email: draft.email.trim(),
+      topic: draft.topic.trim(),
+      desc: draft.desc.trim(),
+      mode: draft.mode,
+      date: draft.date,
+      time: draft.time,
+      endTime: draft.endTime,
+      duration
+    });
+    setEditing(false);
+    onToast('Booking updated');
+  }
+
+  function cancel() {
+    setDraft({
+      name: log.name || '', phone: log.phone || '', email: log.email || '',
+      topic: log.topic || '', desc: log.desc || '', mode: log.mode || '',
+      date: log.date || '', time: log.time || '', endTime: log.endTime || ''
+    });
+    setEditing(false);
+  }
+
+  /* View-mode rows */
+  const viewFields = [
     ['Name',        log.name],
     ['Phone',       log.phone],
     ['Email',       log.email],
@@ -82,21 +139,87 @@ function LogDetail({ log, onClose, onDelete }) {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
         <div className="log-modal-head">
-          <span className="log-modal-eyebrow">Booking detail</span>
+          <span className="log-modal-eyebrow">{editing ? 'Editing booking' : 'Booking detail'}</span>
           <h3>{log.name || 'Anonymous booking'}</h3>
           <p>{log.topic || 'Untitled topic'}</p>
         </div>
-        <dl className="log-modal-grid">
-          {fields.map(([k, v]) => (
-            <div key={k} className="log-modal-row">
-              <dt>{k}</dt>
-              <dd>{v ? String(v) : <span className="muted">—</span>}</dd>
+
+        {editing ? (
+          <div className="log-modal-edit">
+            <div className="log-edit-row">
+              <label>Name *</label>
+              <input value={draft.name} onChange={e => setField('name', e.target.value)} />
             </div>
-          ))}
-        </dl>
+            <div className="log-edit-row">
+              <label>Phone *</label>
+              <input value={draft.phone} onChange={e => setField('phone', e.target.value)} />
+            </div>
+            <div className="log-edit-row">
+              <label>Email</label>
+              <input type="email" value={draft.email} onChange={e => setField('email', e.target.value)} />
+            </div>
+            <div className="log-edit-row">
+              <label>Topic</label>
+              <input value={draft.topic} onChange={e => setField('topic', e.target.value)} />
+            </div>
+            <div className="log-edit-row">
+              <label>Description</label>
+              <textarea rows="3" value={draft.desc} onChange={e => setField('desc', e.target.value)} />
+            </div>
+            <div className="log-edit-row">
+              <label>Mode</label>
+              <select value={draft.mode} onChange={e => setField('mode', e.target.value)}>
+                <option value="">— Select —</option>
+                {MODES.map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+            <div className="log-edit-row">
+              <label>Date</label>
+              <input type="date" value={draft.date} onChange={e => setField('date', e.target.value)} />
+            </div>
+            <div className="log-edit-grid2">
+              <div className="log-edit-row">
+                <label>Start</label>
+                <input type="time" value={draft.time} onChange={e => setField('time', e.target.value)} />
+              </div>
+              <div className="log-edit-row">
+                <label>End</label>
+                <input type="time" value={draft.endTime} onChange={e => setField('endTime', e.target.value)} />
+              </div>
+            </div>
+            {draft.time && draft.endTime && (
+              <div className="log-edit-hint">
+                New duration: <strong>{computeDuration(draft.time, draft.endTime) || '—'}</strong>
+              </div>
+            )}
+          </div>
+        ) : (
+          <dl className="log-modal-grid">
+            {viewFields.map(([k, v]) => (
+              <div key={k} className="log-modal-row">
+                <dt>{k}</dt>
+                <dd>{v ? String(v) : <span className="muted">—</span>}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
+
         <div className="log-modal-actions">
-          <button type="button" className="topbar-btn" onClick={onClose}>Close</button>
-          <button type="button" className="topbar-btn danger" onClick={() => { onDelete(log.id); onClose(); }}>Delete booking</button>
+          {editing ? (
+            <>
+              <button type="button" className="topbar-btn" onClick={cancel}>Cancel</button>
+              <button type="button" className="topbar-btn primary" onClick={save}>Save changes</button>
+            </>
+          ) : (
+            <>
+              <button type="button" className="topbar-btn danger" onClick={() => { onDelete(log.id); onClose(); }}>Delete</button>
+              <button type="button" className="topbar-btn" onClick={onClose}>Close</button>
+              <button type="button" className="topbar-btn primary" onClick={() => setEditing(true)}>
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                Edit
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>,
@@ -110,7 +233,11 @@ export default function Logs() {
   const allLogs = Array.isArray(state.logs) ? state.logs : [];
   useRevealAll([allLogs.length]);
 
-  const [active, setActive] = useState(null);
+  const [activeId, setActiveId] = useState(null);
+  /* Re-derive `active` from state so the modal mirrors the latest fields
+   * after an in-modal edit (no stale closure). */
+  const active = activeId ? allLogs.find(l => l.id === activeId) : null;
+
   const [toast, setToast] = useState({ msg: '', show: false });
   const showToast = (m) => {
     setToast({ msg: m, show: true });
@@ -126,6 +253,9 @@ export default function Logs() {
     if (!confirm('Clear ALL booking logs? This cannot be undone.')) return;
     Store.clearLogs(); showToast('All logs cleared');
   }
+  function saveLog(id, partial) {
+    Store.updateLog(id, partial);
+  }
 
   const sorted = [...allLogs].sort((a, b) => {
     const da = new Date((a.date || '') + 'T' + (a.time || '00:00')).getTime();
@@ -135,7 +265,7 @@ export default function Logs() {
 
   const summary = allLogs.length === 0
     ? 'No bookings yet'
-    : `${allLogs.length} booking${allLogs.length === 1 ? '' : 's'} — long-press a row for full details`;
+    : `${allLogs.length} booking${allLogs.length === 1 ? '' : 's'} — long-press a row to view & edit`;
 
   return (
     <AdminLayout
@@ -154,7 +284,7 @@ export default function Logs() {
         </div>
         <div className="logs-hint">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-          <span><strong>Long-press</strong> (or tap and hold) any row to see the full booking — description, email, end time, submitted at &amp; more.</span>
+          <span><strong>Long-press</strong> any row to open the full booking — view description, email, end time, submitted-at, and edit any field.</span>
         </div>
         <div className="logs-table-wrap">
           <table>
@@ -170,7 +300,7 @@ export default function Logs() {
                   key={l.id}
                   log={l}
                   index={i}
-                  onOpen={() => setActive(l)}
+                  onOpen={() => setActiveId(l.id)}
                   onDelete={() => deleteOne(l.id)}
                 />
               ))}
@@ -184,17 +314,21 @@ export default function Logs() {
         </div>
       </div>
 
-      <LogDetail log={active} onClose={() => setActive(null)} onDelete={deleteOne} />
+      <LogDetail
+        log={active}
+        onClose={() => setActiveId(null)}
+        onDelete={deleteOne}
+        onSave={saveLog}
+        onToast={showToast}
+      />
       <Toast {...toast} />
     </AdminLayout>
   );
 }
 
 function LogRow({ log, index, onOpen, onDelete }) {
-  /* Long-press opens detail; quick tap also opens (so desktop users
-   * who just want to click can do so). The delete button stops
-   * propagation so it doesn't trigger row open. */
-  const press = useLongPress(onOpen, onOpen);
+  /* Long-press only — quick taps/clicks do nothing (per request). */
+  const press = useLongPress(onOpen);
 
   return (
     <tr className="log-row" {...press}>
