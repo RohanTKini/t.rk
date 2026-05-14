@@ -2197,6 +2197,23 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   border-bottom: 1px solid var(--dark-line);
   margin-bottom: 12px;
 }
+.sidebar-close {
+  display: none;
+  margin-left: auto;
+  width: 36px; height: 36px;
+  align-items: center; justify-content: center;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ash-grey);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  flex-shrink: 0;
+  transition: background-color .25s ease, color .25s ease;
+}
+.sidebar-close:hover,
+.sidebar-close:active {
+  background: rgba(200, 155, 79, 0.16);
+  color: var(--gold);
+}
 .admin-brand-text strong { display: block; font-family: var(--font-display); font-weight: 800; font-size: 15px; color: var(--ivory); letter-spacing: -0.02em; }
 .admin-brand-text small { display: block; font-size: 11px; color: var(--ash-grey); margin-top: 2px; letter-spacing: 0.06em; }
 .admin-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; padding-top: 8px; }
@@ -3160,6 +3177,7 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   .admin-sidebar.open { transform: translateX(0); }
   .admin-shell:has(.admin-sidebar.open) .sidebar-backdrop { display: block; }
   .menu-btn { display: inline-flex; }
+  .sidebar-close { display: inline-flex !important; }
 }
 
 @media (max-width: 720px) {
@@ -3327,9 +3345,12 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+/* Opacity-only — must NOT animate transform, because mobile uses
+ * `transform: translateX(-100%)` to hide the sidebar drawer. An animated
+ * transform with fill-mode: both pins it open. */
 @keyframes adminSidebarSlide {
-  from { opacity: 0; transform: translate3d(-14px, 0, 0); }
-  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
 @keyframes adminNavStagger {
   from { opacity: 0; transform: translate3d(-10px, 0, 0); }
