@@ -35,15 +35,25 @@ export default function AdminLayout({ title, subtitle, headerRight, children }) 
     return () => document.removeEventListener('keydown', onKey);
   }, []);
 
-  /* Auto scroll-reveal every section in every admin page. Works for sections
-   * that mount later too (toggles, new gallery items, freshly added blocked
-   * dates) via MutationObserver. */
+  /* Auto scroll-reveal every section in every admin page.
+   *
+   * Mounted ONCE for the life of the admin shell (deps: []), never torn down
+   * on child re-renders. A MutationObserver picks up sections that mount
+   * later — async store data on first login, toggled panels, new gallery
+   * items, freshly added blocked dates, or a route change to another admin
+   * page. Re-scans on a few timers guard against the first-login race where
+   * the dashboard paints before Firebase data arrives. */
   useEffect(() => {
     const root = contentRef.current;
     if (!root) return;
 
+    const revealInView = () => {
+      root.querySelectorAll('.admin-reveal:not(.is-visible)').forEach(n => n.classList.add('is-visible'));
+    };
+
     if (typeof IntersectionObserver === 'undefined') {
-      root.querySelectorAll(REVEAL_SELECTORS).forEach(n => n.classList.add('admin-reveal', 'is-visible'));
+      root.querySelectorAll(REVEAL_SELECTORS).forEach(n => n.classList.add('admin-reveal'));
+      revealInView();
       return;
     }
 
@@ -54,34 +64,45 @@ export default function AdminLayout({ title, subtitle, headerRight, children }) 
           io.unobserve(e.target);
         }
       });
-    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    }, { threshold: 0.05, rootMargin: '0px 0px -32px 0px' });
 
-    const tagAndObserve = (scope) => {
-      scope.querySelectorAll(REVEAL_SELECTORS).forEach(node => {
-        if (node.classList.contains('admin-reveal')) return;
+    /* Tag any new sections, reveal whatever is already in view, observe the
+     * rest. Re-evaluates nodes that were tagged but not yet revealed, so a
+     * recreated DOM (route change) or late data never leaves a blank panel. */
+    const scan = () => {
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      root.querySelectorAll(REVEAL_SELECTORS).forEach(node => {
+        if (node.classList.contains('is-visible')) return;
         node.classList.add('admin-reveal');
-        const rect = node.getBoundingClientRect();
-        if (rect.top < window.innerHeight && rect.bottom > 0) {
+        const r = node.getBoundingClientRect();
+        if (r.top < vh * 0.96 && r.bottom > 0) {
           node.classList.add('is-visible');
-        } else {
+        } else if (!node.dataset.ioWatched) {
+          node.dataset.ioWatched = '1';
           io.observe(node);
         }
       });
     };
 
-    tagAndObserve(root);
+    let raf = 0;
+    const queueScan = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(scan);
+    };
 
-    const mo = new MutationObserver((mutations) => {
-      mutations.forEach(m => {
-        m.addedNodes.forEach(n => {
-          if (n.nodeType === 1) tagAndObserve(n);
-        });
-      });
-    });
+    scan();
+    const timers = [120, 400, 900, 1800].map(ms => setTimeout(scan, ms));
+
+    const mo = new MutationObserver(queueScan);
     mo.observe(root, { childList: true, subtree: true });
 
-    return () => { io.disconnect(); mo.disconnect(); };
-  }, [children]);
+    return () => {
+      io.disconnect();
+      mo.disconnect();
+      cancelAnimationFrame(raf);
+      timers.forEach(clearTimeout);
+    };
+  }, []);
 
   function logout() {
     sessionStorage.removeItem('rk_admin_auth');
