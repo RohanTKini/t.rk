@@ -6,7 +6,7 @@ import { useRevealAll } from '../lib/useReveal.js';
 import {
   WHATSAPP_NUMBER,
   formatDate, formatTime12, computeDuration,
-  checkDate, checkTime, checkEndAfterStart, todayISO
+  checkDate, checkTime, checkEndAfterStart, checkSlotClash, todayISO
 } from '../lib/helpers.js';
 import RkLogo from '../components/RkLogo.jsx';
 import SmartImage from '../components/SmartImage.jsx';
@@ -25,6 +25,7 @@ export default function Schedule() {
   const permDisabled = settings.permDisabled === true;
   const tempDisabled = settings.tempDisabled === true;
   const blockedDates = (tempDisabled && Array.isArray(settings.blockedDates)) ? settings.blockedDates : [];
+  const logs = Array.isArray(state.logs) ? state.logs : [];
 
   const address = content.address || DEFAULT_ADDRESS;
   const locationMode = settings.locationMode || null;
@@ -61,27 +62,40 @@ export default function Schedule() {
     const sr = checkTime(start, 'start time'); if (!sr.ok) return sr;
     const er = checkTime(end, 'end time'); if (!er.ok) return er;
     const or = checkEndAfterStart(start, end); if (!or.ok) return or;
+    const cl = checkSlotClash(date, start, end, logs); if (!cl.ok) return cl;
     return { ok: true };
-  }, [date, start, end, blockedDates]);
+  }, [date, start, end, blockedDates, logs]);
 
   function onDateChange(v) {
     setDate(v);
     const r = checkDate(v, blockedDates);
-    if (!r.ok) setPopup(r);
+    if (!r.ok) { setPopup(r); return; }
+    if (v && start && end) {
+      const c = checkSlotClash(v, start, end, logs);
+      if (!c.ok) setPopup(c);
+    }
   }
   function onStartChange(v) {
     setStart(v);
     const r = checkTime(v, 'start time');
     if (!r.ok) { setPopup(r); return; }
     const order = checkEndAfterStart(v, end);
-    if (!order.ok) setPopup(order);
+    if (!order.ok) { setPopup(order); return; }
+    if (date && v && end) {
+      const c = checkSlotClash(date, v, end, logs);
+      if (!c.ok) setPopup(c);
+    }
   }
   function onEndChange(v) {
     setEnd(v);
     const r = checkTime(v, 'end time');
     if (!r.ok) { setPopup(r); return; }
     const order = checkEndAfterStart(start, v);
-    if (!order.ok) setPopup(order);
+    if (!order.ok) { setPopup(order); return; }
+    if (date && start && v) {
+      const c = checkSlotClash(date, start, v, logs);
+      if (!c.ok) setPopup(c);
+    }
   }
 
   function handleSubmit() {
@@ -92,6 +106,7 @@ export default function Schedule() {
     const sr = checkTime(start, 'start time'); if (!sr.ok) { setPopup(sr); return; }
     const er = checkTime(end, 'end time'); if (!er.ok) { setPopup(er); return; }
     const or = checkEndAfterStart(start, end); if (!or.ok) { setPopup(or); return; }
+    const cl = checkSlotClash(date, start, end, logs); if (!cl.ok) { setPopup(cl); return; }
 
     const duration = computeDuration(start, end);
     const entry = {

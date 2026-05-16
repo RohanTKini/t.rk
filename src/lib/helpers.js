@@ -92,6 +92,36 @@ export function checkEndAfterStart(s, e) {
   return { ok: true };
 }
 
+/* Blocks a new request if its [start, end) window overlaps an existing
+ * booking on the same date. Two intervals overlap when each starts before
+ * the other ends. Older logs without a valid start/end are ignored. */
+export function checkSlotClash(dateStr, start, end, logs = []) {
+  if (!dateStr || !start || !end) return { ok: true };
+  const reqStart = timeToMinutes(start);
+  const reqEnd = timeToMinutes(end);
+  if (reqStart == null || reqEnd == null || reqEnd <= reqStart) return { ok: true };
+
+  const clash = (logs || []).find((l) => {
+    if (!l || l.date !== dateStr) return false;
+    const exStart = timeToMinutes(l.time);
+    const exEnd = timeToMinutes(l.endTime);
+    if (exStart == null || exEnd == null || exEnd <= exStart) return false;
+    return reqStart < exEnd && reqEnd > exStart;
+  });
+
+  if (clash) {
+    return {
+      ok: false,
+      title: 'This slot is already taken',
+      message:
+        `${formatDate(dateStr)} is already booked from ${formatTime12(clash.time)} to ` +
+        `${formatTime12(clash.endTime)}. To avoid a clash, please choose a time outside ` +
+        `this window — or pick another date.`
+    };
+  }
+  return { ok: true };
+}
+
 export const todayISO = () => new Date().toISOString().split('T')[0];
 
 export const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
