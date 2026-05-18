@@ -3,6 +3,7 @@ import AdminLayout from '../components/AdminLayout.jsx';
 import Toast from '../components/Toast.jsx';
 import RkLogo from '../components/RkLogo.jsx';
 import SmartImage from '../components/SmartImage.jsx';
+import { useConfirm } from '../components/useConfirm.jsx';
 import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
 import { newId } from '../lib/helpers.js';
@@ -14,6 +15,7 @@ export default function AdminGallery() {
 
   const list = state.gallery || [];
 
+  const { confirm, confirmEl } = useConfirm();
   const [form, setForm] = useState({ image: '', location: '', caption: '' });
   const [editing, setEditing] = useState(null);
   const [toast, setToast] = useState({ msg: '', show: false });
@@ -49,8 +51,13 @@ export default function AdminGallery() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function remove(id) {
-    if (!confirm('Remove this image from the gallery?')) return;
+  async function remove(id) {
+    const ok = await confirm({
+      title: 'Remove this image?',
+      message: 'It will be taken off your public gallery and home-page slider. This cannot be undone.',
+      confirmText: 'Remove'
+    });
+    if (!ok) return;
     Store.setGallery(list.filter(x => x.id !== id));
     showToast('Removed');
     if (editing === id) reset();
@@ -134,6 +141,7 @@ export default function AdminGallery() {
       </div>
 
       <Toast {...toast} />
+      {confirmEl}
     </AdminLayout>
   );
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import AdminLayout from '../components/AdminLayout.jsx';
 import Toast from '../components/Toast.jsx';
+import { useConfirm } from '../components/useConfirm.jsx';
 import { Store } from '../lib/store.js';
 import {
   formatDate, formatDateShort, formatTime12,
@@ -238,6 +239,7 @@ export default function Logs() {
    * after an in-modal edit (no stale closure). */
   const active = activeId ? allLogs.find(l => l.id === activeId) : null;
 
+  const { confirm, confirmEl } = useConfirm();
   const [toast, setToast] = useState({ msg: '', show: false });
   const showToast = (m) => {
     setToast({ msg: m, show: true });
@@ -245,12 +247,22 @@ export default function Logs() {
     showToast._t = setTimeout(() => setToast(t => ({ ...t, show: false })), 2500);
   };
 
-  function deleteOne(id) {
-    if (!confirm('Delete this booking? This cannot be undone.')) return;
+  async function deleteOne(id) {
+    const ok = await confirm({
+      title: 'Delete this booking?',
+      message: 'This booking entry will be permanently removed from your log. This cannot be undone.',
+      confirmText: 'Delete'
+    });
+    if (!ok) return;
     Store.deleteLog(id); showToast('Booking deleted');
   }
-  function clearAll() {
-    if (!confirm('Clear ALL booking logs? This cannot be undone.')) return;
+  async function clearAll() {
+    const ok = await confirm({
+      title: 'Clear all booking logs?',
+      message: 'Every booking entry will be permanently erased. This cannot be undone.',
+      confirmText: 'Clear all'
+    });
+    if (!ok) return;
     Store.clearLogs(); showToast('All logs cleared');
   }
   function saveLog(id, partial) {
@@ -322,6 +334,7 @@ export default function Logs() {
         onToast={showToast}
       />
       <Toast {...toast} />
+      {confirmEl}
     </AdminLayout>
   );
 }

@@ -3,6 +3,7 @@ import AdminLayout from '../components/AdminLayout.jsx';
 import Toast from '../components/Toast.jsx';
 import RkLogo from '../components/RkLogo.jsx';
 import SmartImage from '../components/SmartImage.jsx';
+import { useConfirm } from '../components/useConfirm.jsx';
 import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
 import { newId, formatMonthYear } from '../lib/helpers.js';
@@ -20,6 +21,7 @@ export default function AdminProducts() {
     techStack: '', features: '', gallery: ''
   });
   const [editing, setEditing] = useState(null);
+  const { confirm, confirmEl } = useConfirm();
 
   const STATUS_OPTIONS = ['', 'Live', 'In Development', 'Coming Soon', 'Concept'];
   const [toast, setToast] = useState({ msg: '', show: false });
@@ -81,8 +83,13 @@ export default function AdminProducts() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function remove(id) {
-    if (!confirm('Remove this product?')) return;
+  async function remove(id) {
+    const ok = await confirm({
+      title: 'Remove this product?',
+      message: 'This product and its detail page will be removed from your portfolio. This cannot be undone.',
+      confirmText: 'Remove'
+    });
+    if (!ok) return;
     Store.setProducts(list.filter(x => x.id !== id));
     showToast('Removed');
     if (editing === id) reset();
@@ -212,6 +219,7 @@ export default function AdminProducts() {
       </div>
 
       <Toast {...toast} />
+      {confirmEl}
     </AdminLayout>
   );
 }

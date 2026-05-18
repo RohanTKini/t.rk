@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import AdminLayout from '../components/AdminLayout.jsx';
 import Toast from '../components/Toast.jsx';
+import { useConfirm } from '../components/useConfirm.jsx';
 import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
 import { newId, formatMonthYear } from '../lib/helpers.js';
@@ -39,6 +40,7 @@ export default function AdminExperience() {
     role: '', org: '', type: 'Full-time', startDate: '', endDate: '', current: true, location: ''
   });
   const [editing, setEditing] = useState(null);
+  const { confirm, confirmEl } = useConfirm();
   const [toast, setToast] = useState({ msg: '', show: false });
   const showToast = (m) => {
     setToast({ msg: m, show: true });
@@ -92,8 +94,13 @@ export default function AdminExperience() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function remove(id) {
-    if (!confirm('Remove this experience?')) return;
+  async function remove(id) {
+    const ok = await confirm({
+      title: 'Remove this experience?',
+      message: 'This role will be removed from your portfolio timeline. This cannot be undone.',
+      confirmText: 'Remove'
+    });
+    if (!ok) return;
     Store.setExperiences(list.filter(x => x.id !== id));
     showToast('Removed');
     if (editing === id) reset();
@@ -177,6 +184,7 @@ export default function AdminExperience() {
       </div>
 
       <Toast {...toast} />
+      {confirmEl}
     </AdminLayout>
   );
 }

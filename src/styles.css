@@ -1997,6 +1997,81 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
 .popup-card h3 { font-family: var(--font-display); font-weight: 800; font-size: 20px; letter-spacing: -0.02em; margin: 0; }
 .popup-card p  { color: var(--ink-3); font-size: 14px; line-height: 1.6; margin: 0 0 8px; }
 
+/* IN-APP CONFIRM DIALOG — themed replacement for window.confirm() */
+.confirm-overlay {
+  position: fixed; inset: 0; z-index: 240;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.confirm-bg {
+  position: absolute; inset: 0;
+  background: rgba(7, 17, 24, 0.78);
+  backdrop-filter: blur(6px);
+  animation: fadeIn .25s var(--ease) both;
+}
+.confirm-card {
+  position: relative;
+  width: 100%; max-width: 420px; text-align: center;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px 26px;
+  box-shadow: var(--shadow-lg);
+  animation: popIn .4s var(--ease) both;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.confirm-mark {
+  width: 58px; height: 58px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(21, 50, 67, 0.10); color: var(--deep-space);
+}
+.confirm-mark.danger { background: rgba(210, 74, 74, 0.12); color: var(--danger); }
+.confirm-card h3 {
+  font-family: var(--font-display); font-weight: 800;
+  font-size: 19px; letter-spacing: -0.02em; margin: 0; color: var(--ink);
+}
+.confirm-card p {
+  color: var(--ink-3); font-size: 13.5px; line-height: 1.6;
+  margin: 0 0 6px; max-width: 340px;
+}
+.confirm-actions {
+  display: flex; gap: 10px; width: 100%; margin-top: 6px;
+}
+.confirm-btn {
+  flex: 1;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-family: var(--font-display);
+  font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: background-color .22s var(--ease), box-shadow .22s var(--ease),
+              transform .18s var(--ease), color .22s var(--ease);
+}
+.confirm-btn:hover { transform: translateY(-2px); }
+.confirm-btn:active { transform: translateY(0); }
+.confirm-btn-cancel {
+  background: var(--surface-2);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+.confirm-btn-cancel:hover { background: var(--bg-2); }
+.confirm-btn-danger {
+  background: var(--danger); color: #fff;
+  box-shadow: 0 8px 22px rgba(210, 74, 74, 0.28);
+}
+.confirm-btn-danger:hover { background: #c0403f; box-shadow: 0 12px 28px rgba(210, 74, 74, 0.34); }
+.confirm-btn-go {
+  background: var(--deep-space); color: var(--ivory);
+  box-shadow: 0 8px 22px rgba(21, 50, 67, 0.25);
+}
+.confirm-btn-go:hover { background: #0a1c28; }
+
+@media (max-width: 480px) {
+  .confirm-card { padding: 26px 20px 22px; }
+  .confirm-actions { flex-direction: column-reverse; }
+}
+
 /* TOAST */
 .toast {
   position: fixed; bottom: 28px; left: 50%;
@@ -2488,7 +2563,38 @@ code { font-family: var(--font-mono); font-size: 0.88em; background: var(--bg-2)
   background: var(--surface);
   box-shadow: 0 0 0 4px rgba(21, 50, 67, 0.1);
 }
-.admin-form-card .field input[type="file"] { padding: 8px; background: var(--surface-2); }
+/* File input — themed to match the site instead of the raw browser button.
+ * ::file-selector-button (+ legacy ::-webkit-) restyles the "Choose File"
+ * chip; the surrounding control gets the same look as other inputs. */
+.admin-form-card .field input[type="file"] {
+  padding: 8px 12px;
+  background: var(--surface-2);
+  color: var(--ink-3);
+  font-size: 13px;
+  cursor: pointer;
+}
+.admin-form-card .field input[type="file"]::file-selector-button,
+.admin-form-card .field input[type="file"]::-webkit-file-upload-button {
+  margin-right: 12px;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--deep-space);
+  color: var(--ivory);
+  font-family: var(--font-body, inherit);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  cursor: pointer;
+  transition: background-color .25s var(--ease), box-shadow .25s var(--ease), transform .2s var(--ease);
+}
+.admin-form-card .field input[type="file"]:hover::file-selector-button,
+.admin-form-card .field input[type="file"]:hover::-webkit-file-upload-button {
+  background: var(--gold);
+  color: #2a1c0a;
+  box-shadow: 0 6px 16px rgba(200, 155, 79, 0.28);
+  transform: translateY(-1px);
+}
 .admin-form-card .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; min-width: 0; }
 .admin-form-card .field-row > .field { min-width: 0; }
 

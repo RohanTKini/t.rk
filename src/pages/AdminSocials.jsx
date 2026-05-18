@@ -4,6 +4,7 @@ import Toast from '../components/Toast.jsx';
 import { Store } from '../lib/store.js';
 import { useRevealAll } from '../lib/useReveal.js';
 import SocialIcon from '../components/SocialIcons.jsx';
+import { useConfirm } from '../components/useConfirm.jsx';
 import { newId } from '../lib/helpers.js';
 
 const TYPES = ['instagram', 'linkedin', 'x', 'twitter', 'facebook', 'whatsapp', 'youtube', 'github', 'other'];
@@ -15,6 +16,7 @@ export default function AdminSocials() {
 
   const list = state.socials || [];
 
+  const { confirm, confirmEl } = useConfirm();
   const [form, setForm] = useState({ id: 'instagram', name: 'Instagram', href: '' });
   const [editing, setEditing] = useState(null);
   const [toast, setToast] = useState({ msg: '', show: false });
@@ -31,10 +33,15 @@ export default function AdminSocials() {
 
   function save(e) {
     e?.preventDefault?.();
-    if (!form.name.trim() || !form.href.trim()) { showToast('Name and URL are required'); return; }
+    if (!form.href.trim()) { showToast('A URL is required'); return; }
+    // Display name is optional — fall back to the network label, or
+    // "Website" for the generic "other" type.
+    const fallbackName = form.id === 'other'
+      ? 'Website'
+      : form.id.charAt(0).toUpperCase() + form.id.slice(1);
     const entry = {
       id: editing || (form.id === 'other' ? newId() : form.id),
-      name: form.name.trim(),
+      name: form.name.trim() || fallbackName,
       href: form.href.trim()
     };
     const next = editing
@@ -51,8 +58,13 @@ export default function AdminSocials() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function remove(id) {
-    if (!confirm('Remove this social link?')) return;
+  async function remove(id) {
+    const ok = await confirm({
+      title: 'Remove this social link?',
+      message: 'This link will no longer appear in the contact section of your site.',
+      confirmText: 'Remove'
+    });
+    if (!ok) return;
     Store.setSocials(list.filter(x => x.id !== id));
     showToast('Removed');
     if (editing === id) reset();
@@ -78,8 +90,8 @@ export default function AdminSocials() {
             </select>
           </div>
           <div className="field">
-            <label>Display name</label>
-            <input value={form.name} onChange={e => setForm(s => ({ ...s, name: e.target.value }))} placeholder="Instagram, LinkedIn, etc." />
+            <label>Display name <span style={{ color: 'var(--ink-3)', fontWeight: 500, textTransform: 'none', letterSpacing: 0 }}>(optional)</span></label>
+            <input value={form.name} onChange={e => setForm(s => ({ ...s, name: e.target.value }))} placeholder="Leave blank to use the network name" />
           </div>
         </div>
         <div className="field">
@@ -116,6 +128,7 @@ export default function AdminSocials() {
       </div>
 
       <Toast {...toast} />
+      {confirmEl}
     </AdminLayout>
   );
 }
